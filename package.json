@@ -14,7 +14,7 @@
   "author": {
     "name": "Digital Bazaar, Inc.",
     "email": "support@digitalbazaar.com",
-    "url": "http://digitalbazaar.com"
+    "url": "https://digitalbazaar.com"
   },
   "bugs": {
     "url": "https://github.com/digitalbazaar/bedrock-authn-token-http/issues"
@@ -32,6 +32,10 @@
     "bedrock-express": "2.0.8 - 3.x",
     "bedrock-passport": "4.0.2 - 5.x",
     "bedrock-validation": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-digitalbazaar": "^2.3.0"
   },
   "directories": {
     "lib": "./lib"
