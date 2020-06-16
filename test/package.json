@@ -15,7 +15,7 @@
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^3.1.0",
     "bedrock-identity": "^8.0.0",
-    "bedrock-mongodb": "^6.0.0",
+    "bedrock-mongodb": "^7.0.0",
     "bedrock-passport": "^5.0.2",
     "bedrock-permission": "^3.0.0",
     "bedrock-server": "^2.6.0",
