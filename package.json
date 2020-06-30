@@ -32,7 +32,7 @@
     "bedrock-account": "3.x - 4.x",
     "bedrock-authn-token": "1.x - 2.x",
     "bedrock-express": "2.0.8 - 3.x",
-    "bedrock-passport": "4.0.2 - 5.x",
+    "bedrock-passport": "5.x - 6.x",
     "bedrock-validation": "^4.4.0"
   },
   "devDependencies": {

@@ -11,11 +11,11 @@
   "dependencies": {
     "bedrock": "^3.1.1",
     "bedrock-account": "^4.0.0",
-    "bedrock-authn-token": "github:digitalbazaar/bedrock-authn-token#update-bedrock-account",
+    "bedrock-authn-token": "^2.2.0",
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^3.2.0",
     "bedrock-mongodb": "^7.1.0",
-    "bedrock-passport": "github:digitalbazaar/bedrock-passport#update-bedrock-account",
+    "bedrock-passport": "^6.0.0",
     "bedrock-permission": "^3.0.0",
     "bedrock-server": "^2.6.0",
     "bedrock-test": "^5.3.0",
