@@ -9,11 +9,13 @@
     "coverage-report": "nyc report"
   },
   "dependencies": {
+    "@digitalbazaar/http-client": "^1.0.0",
     "bedrock": "^3.1.1",
     "bedrock-account": "^4.0.0",
     "bedrock-authn-token": "^2.2.0",
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^3.2.0",
+    "bedrock-https-agent": "^1.1.0",
     "bedrock-mongodb": "^7.1.0",
     "bedrock-passport": "^6.0.0",
     "bedrock-permission": "^3.0.0",
@@ -21,7 +23,8 @@
     "bedrock-test": "^5.3.0",
     "bedrock-validation": "^4.4.0",
     "cross-env": "^7.0.2",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "sinon": "^9.0.2"
   },
   "nyc": {
     "excludeNodeModules": false,
