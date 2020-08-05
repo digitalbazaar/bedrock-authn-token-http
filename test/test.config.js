@@ -19,6 +19,9 @@ config.mongodb.dropCollections.collections = [];
 // allow self-signed certs in test framework
 config['https-agent'].rejectUnauthorized = false;
 
+// this needs to be true in order to set auth stuff
+config['account-http'].autoLoginNewAccounts = true;
+
 roles['account.registered'] = {
   id: 'account.registered',
   label: 'Account Test Role',

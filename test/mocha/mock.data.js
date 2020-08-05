@@ -14,6 +14,7 @@ accounts[email].account = _createAccount(email);
 accounts[email].meta = {};
 accounts[email].meta.sysResourceRole = [{
   sysRole: 'account.registered',
+  generateResource: 'id',
 }];
 
 function _createAccount(email) {

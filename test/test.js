@@ -8,6 +8,7 @@ global.passportStub = sinon.stub(brPassport, 'optionallyAuthenticated');
 require('bedrock-mongodb');
 require('bedrock-express');
 require('bedrock-account');
+require('bedrock-account-http');
 require('bedrock-authn-token');
 require('bedrock-permission');
 require('bedrock-authn-token-http');
