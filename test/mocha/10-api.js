@@ -158,7 +158,7 @@ describe('api', () => {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const hash =
-      '$2y$12$LR16D./bm4rN7a5PHhRypeNs5SW4KNWz.XjSvw7JG6KYd1yKjcGqm';
+        '$2y$12$LR16D./bm4rN7a5PHhRypeNs5SW4KNWz.XjSvw7JG6KYd1yKjcGqm';
 
       stubPassportStub('alpha@example.com');
       let err;
@@ -414,6 +414,32 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
+    it('should throw error when authenticating with a bad token',
+      async function() {
+        const type = 'totp';
+        let err;
+        stubPassportStub('alpha@example.com');
+        const accountId = accounts['alpha@example.com'].account.id;
+
+        // attempt to authenticate with an incorrect challenge
+        let res;
+        try {
+          res = await httpClient.post(`${authenticateURL}`, {
+            agent,
+            json: {
+              account: accountId,
+              type,
+              challenge: 'incorrect-challenge',
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        should.exist(err);
+        should.not.exist(res);
+        err.name.should.equal('HTTPError');
+        err.message.should.equal('Not authenticated.');
+      });
   });
   describe('get /routes.registration', () => {
     before(async function setup() {
