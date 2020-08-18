@@ -12,7 +12,7 @@ require('bedrock-account-http');
 require('bedrock-authn-token');
 require('bedrock-permission');
 require('bedrock-authn-token-http');
-require('bedrock-test');
 require('bedrock-https-agent');
+require('bedrock-test');
 
 bedrock.start();

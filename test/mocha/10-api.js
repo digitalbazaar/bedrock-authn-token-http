@@ -5,13 +5,14 @@
 
 const bedrock = require('bedrock');
 const {config} = bedrock;
-const https = require('https');
 const helpers = require('./helpers');
 const mockData = require('./mock.data');
 const {httpClient} = require('@digitalbazaar/http-client');
 const brAccount = require('bedrock-account');
 const brAuthnToken = require('bedrock-authn-token');
 const {authenticator} = require('otplib');
+const brHttpsAgent = require('bedrock-https-agent');
+const {agent} = brHttpsAgent;
 
 let accounts;
 let actors;
@@ -32,9 +33,6 @@ const authenticateURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.authenticate}`;
 const registrationURL = `https://${config.server.host}` +
 `${config['authn-token-http'].routes.registration}`;
-
-// use agent to avoid self-signed certificate errors
-const agent = new https.Agent({rejectUnauthorized: false});
 
 describe('api', () => {
   describe('post /', () => {
