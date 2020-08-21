@@ -12,9 +12,8 @@ const brAccount = require('bedrock-account');
 const brAuthnToken = require('bedrock-authn-token');
 const {authenticator} = require('otplib');
 const brHttpsAgent = require('bedrock-https-agent');
-const sinon = require('sinon');
-const brPassport = require('bedrock-passport');
-const passportStub = sinon.stub(brPassport, 'optionallyAuthenticated');
+const setCookie = require('set-cookie-parser');
+const bcrypt = require('bcrypt');
 
 let accounts;
 let actors;
@@ -35,6 +34,8 @@ const authenticateURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.authenticate}`;
 const registrationURL = `https://${config.server.host}` +
 `${config['authn-token-http'].routes.registration}`;
+const loginURL = `https://${config.server.host}` +
+`${config['authn-token-http'].routes.login}`;
 
 describe('api', () => {
   describe('post /', () => {
@@ -90,7 +91,7 @@ describe('api', () => {
       res.status.should.equal(204);
       should.not.exist(res.data);
     });
-    it.skip('should create a `totp` successfully', async function() {
+    it('should create a `totp` successfully', async function() {
       const type = 'totp';
       let err;
       let res;
@@ -159,11 +160,12 @@ describe('api', () => {
         res.status.should.equal(204);
         should.not.exist(res.data);
       });
-    it.skip('should create "password" successfully', async function() {
+    it('should create "password" successfully', async function() {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
-      const hash =
-        '$2y$12$LR16D./bm4rN7a5PHhRypeNs5SW4KNWz.XjSvw7JG6KYd1yKjcGqm';
+      const password = 'some-password';
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(password, saltRounds);
       const {agent} = brHttpsAgent;
       stubPassportStub('alpha@example.com');
       let err;
@@ -461,7 +463,7 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it('should return `true` if token client is registered.',
+    it('should return `true` if client is registered.',
       async function() {
         const type = 'totp';
         let err;
@@ -507,11 +509,14 @@ describe('api', () => {
         // check if token client  is registered.
         let res2;
         let err2;
+        const splitCookieHeaders =
+          setCookie.splitCookiesString(res.headers.get('set-cookie'));
+        const cookies = setCookie.parse(splitCookieHeaders);
         try {
           res2 = await httpClient.get(
             `${registrationURL}?email=alpha@example.com`, {
               agent, headers: {
-                Cookie: res.headers.get('set-cookie')
+                Cookie: `${cookies[0].name}=${cookies[0].value}`
               }
             });
         } catch(e) {
@@ -521,14 +526,14 @@ describe('api', () => {
         should.exist(res2);
         res2.data.registered.should.equal(true);
       });
-    it('should return `false` if token client is not registered.',
+    it('should return `false` if client is not registered.',
       async function() {
         // call the endpoint with an unregistered token client.
-        let res3;
+        let res;
         let err;
         const {agent} = brHttpsAgent;
         try {
-          res3 = await httpClient.get(
+          res = await httpClient.get(
             `${registrationURL}?email=beta@example.com`, {
               agent
             });
@@ -536,8 +541,205 @@ describe('api', () => {
           err = e;
         }
         assertNoError(err);
+        should.exist(res);
+        res.data.registered.should.equal(false);
+      });
+  });
+  describe('get /routes.login', () => {
+    beforeEach(async function setup() {
+      await helpers.prepareDatabase(mockData);
+      actors = await helpers.getActors(mockData);
+      accounts = mockData.accounts;
+    });
+    afterEach(async function() {
+      // replace stub with an empty stub.
+      passportStub.callsFake((req, res, next) => next());
+    });
+    it('should successfully login with multifactor authentication',
+      async function() {
+        const type = 'totp';
+        const {agent} = brHttpsAgent;
+        stubPassportStub('alpha@example.com');
+        const accountId = accounts['alpha@example.com'].account.id;
+        const actor = await brAccount.getCapabilities({id: accountId});
+
+        await brAuthnToken.setAuthenticationRequirements({
+          account: accountId,
+          actor,
+          requiredAuthenticationMethods: ['token-client-registration'],
+        });
+        // set a totp for the account with authenticationMethod set to
+        // 'token-client-registration'
+        const {secret} = await brAuthnToken.set({
+          account: accountId,
+          actor,
+          type,
+          authenticationMethod: 'token-client-registration',
+        });
+        const challenge = authenticator.generate(secret);
+        // authenticate with the token
+        let res;
+        let err;
+        try {
+          res = await httpClient.post(`${authenticateURL}`, {
+            agent,
+            json: {
+              actor,
+              account: accountId,
+              type,
+              challenge,
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        assertNoError(err);
+        should.exist(res);
+        should.exist(res.data);
+        res.data.should.be.an('object');
+        res.data.authenticated.should.equal(true);
+        res.data.authenticatedMethods.should.be.an('array');
+        res.data.authenticatedMethods[0].should.equal(
+          'token-client-registration'
+        );
+        res.status.should.equal(200);
+        should.exist(res.headers.get('set-cookie'));
+
+        const splitCookieHeaders =
+          setCookie.splitCookiesString(res.headers.get('set-cookie'));
+        const cookies = setCookie.parse(splitCookieHeaders);
+        // login after authentication
+        let res2;
+        let err2;
+        try {
+          res2 = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                actor,
+                type: 'multifactor'
+              }, headers: {
+                Cookie: `${cookies[0].name}=${cookies[0].value};` +
+                  `${cookies[1].name}=${cookies[1].value}`
+              }
+            });
+        } catch(e) {
+          err2 = e;
+        }
+        assertNoError(err2);
+        should.exist(res2);
+        res2.data.account.should.equal(accountId);
+        res2.status.should.equal(200);
+      });
+    it('should fail multifactor login if account is not authenticated',
+      async function() {
+        stubPassportStub('alpha@example.com');
+        const accountId = accounts['alpha@example.com'].account.id;
+        const actor = await brAccount.getCapabilities({id: accountId});
+        const {agent} = brHttpsAgent;
+
+        let res;
+        let err;
+        try {
+          res = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                actor,
+                type: 'multifactor'
+              }
+            });
+        } catch(e) {
+          err = e;
+        }
+        should.exist(err);
+        should.not.exist(res);
+        err.name.should.equal('HTTPError');
+        err.status.should.equal(400);
+        err.message.should.equal('Not authenticated.');
+      });
+    it('should fail login if email and password combination is incorrect',
+      async function() {
+        stubPassportStub('alpha@example.com');
+        const accountId = accounts['alpha@example.com'].account.id;
+        const actor = await brAccount.getCapabilities({id: accountId});
+        const {agent} = brHttpsAgent;
+        let res;
+        let err;
+        try {
+          res = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                actor,
+                email: 'alpha@example.com',
+                password: 'incorrect-password'
+              }
+            });
+        } catch(e) {
+          err = e;
+        }
+        should.exist(err);
+        should.not.exist(res);
+        err.name.should.equal('HTTPError');
+        err.status.should.equal(400);
+        err.message.should.equal(
+          'The email address and password or token combination is incorrect.'
+        );
+      });
+    it('should successfully login if email and password are correct',
+      async function() {
+        stubPassportStub('alpha@example.com');
+        const accountId = accounts['alpha@example.com'].account.id;
+        const actor = await brAccount.getCapabilities({id: accountId});
+        const email = 'alpha@example.com';
+        const type = 'password';
+        const {agent} = brHttpsAgent;
+        const password = 'some-password';
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+
+        let err;
+        let res;
+        // set password for the account
+        try {
+          res = await httpClient.post(`${baseURL}/${type}`, {
+            agent, json: {
+              account: accountId,
+              hash
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
+        should.not.exist(res.data);
+
+        // login
+        let res3;
+        let err3;
+        try {
+          res3 = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                actor,
+                email,
+                hash,
+                type
+              }
+            });
+        } catch(e) {
+          err3 = e;
+        }
+        assertNoError(err3);
         should.exist(res3);
-        res3.data.registered.should.equal(false);
+        res3.status.should.equal(200);
+        should.exist(res3.data);
+        res3.data.should.be.an('object');
       });
   });
 });

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@digitalbazaar/http-client": "^1.0.0",
+    "bcrypt": "^5.0.0",
     "bedrock": "^3.1.1",
     "bedrock-account": "github:digitalbazaar/bedrock-account#unique-email-field",
     "bedrock-account-http": "^1.7.0",
@@ -26,6 +27,7 @@
     "cross-env": "^7.0.2",
     "nyc": "^15.1.0",
     "otplib": "^12.0.1",
+    "set-cookie-parser": "^2.4.6",
     "sinon": "^9.0.2"
   },
   "nyc": {
