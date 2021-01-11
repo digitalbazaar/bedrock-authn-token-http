@@ -14,7 +14,7 @@
     "bedrock": "^3.1.1",
     "bedrock-account": "github:digitalbazaar/bedrock-account#unique-email-field",
     "bedrock-account-http": "^1.7.0",
-    "bedrock-authn-token": "github:digitalbazaar/bedrock-authn-token#delete-existing-nonce",
+    "bedrock-authn-token": "github:digitalbazaar/bedrock-authn-token#fix-verify",
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^3.2.0",
     "bedrock-https-agent": "^1.1.0",

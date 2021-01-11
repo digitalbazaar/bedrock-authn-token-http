@@ -425,6 +425,53 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
+    it('should authenticate with a password', async function() {
+      const type = 'password';
+      const accountId = accounts['alpha@example.com'].account.id;
+      const password = 'test-password';
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(password, saltRounds);
+      const {agent} = brHttpsAgent;
+      stubPassportStub('alpha@example.com');
+      let err;
+      let res;
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            hash
+          }
+        });
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      should.not.exist(res.data);
+
+      // authenticate with the password
+      let res2;
+      let err2;
+      try {
+        res2 = await httpClient.post(`${authenticateURL}`, {
+          agent,
+          json: {
+            email: 'alpha@example.com',
+            type,
+            hash
+          }
+        });
+      } catch(e) {
+        err2 = e;
+      }
+      assertNoError(err2);
+      should.exist(res2);
+      should.exist(res2.data);
+      res2.data.should.be.an('object');
+      res2.data.authenticated.should.equal(true);
+      res2.status.should.equal(200);
+    });
     it('should throw error when authenticating with a bad token',
       async function() {
         const type = 'totp';
