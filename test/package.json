@@ -17,7 +17,7 @@
     "bedrock-authn-token": "github:digitalbazaar/bedrock-authn-token#fix-verify",
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^3.2.0",
-    "bedrock-https-agent": "^1.1.0",
+    "bedrock-https-agent": "^2.0.0",
     "bedrock-mongodb": "^7.1.0",
     "bedrock-passport": "^6.1.0",
     "bedrock-permission": "^3.0.0",
