@@ -2,9 +2,11 @@
 
 ## 1.4.0 - 2021-01-TBD
 
+### Added
+- Setup a cookie and bake clientID into it.
+
 ### Changed
 - Update peerDependencies to include bedrock-account@5 and bedrock@4.
-- Bake clientID into a cookie.
 - Add tests and update test deps.
 
 ## 1.3.0 - 2020-06-30
