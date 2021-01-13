@@ -1,5 +1,10 @@
 # bedrock-authn-token-http ChangeLog
 
+## 1.4.1 - 2021-01-TBD
+
+### Changed
+- Update peerDependencies and test deps to include bedrock-authn-token@3.0.0.
+
 ## 1.4.0 - 2021-01-13
 
 ### Added
