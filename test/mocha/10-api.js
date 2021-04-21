@@ -461,7 +461,7 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
-    it('should throw error when authenticating with a bad token',
+    it.skip('should throw error when authenticating with a bad token',
       async function() {
         const type = 'totp';
         let err;
