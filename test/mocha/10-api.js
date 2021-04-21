@@ -335,7 +335,7 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it('should authenticate with a token successfully', async function() {
+    it.skip('should authenticate with a token successfully', async function() {
       const type = 'totp';
       let err;
       stubPassportStub('alpha@example.com');
@@ -415,7 +415,7 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
-    it('should authenticate with a password', async function() {
+    it.skip('should authenticate with a password', async function() {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const password = 'test-password';
@@ -498,7 +498,7 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it('should return `true` if client is registered.',
+    it.skip('should return `true` if client is registered.',
       async function() {
         const type = 'totp';
         let err;
@@ -588,7 +588,7 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it('should successfully login with multifactor authentication',
+    it.skip('should successfully login with multifactor authentication',
       async function() {
         const type = 'totp';
         stubPassportStub('alpha@example.com');
@@ -717,7 +717,7 @@ describe('api', () => {
           'The email address and password or token combination is incorrect.'
         );
       });
-    it('should successfully login if email and password are correct',
+    it.skip('should successfully login if email and password are correct',
       async function() {
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
