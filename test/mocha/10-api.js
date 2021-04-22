@@ -550,18 +550,14 @@ describe('api', () => {
           'token-client-registration'
         );
         res.status.should.equal(200);
-        should.exist(res.headers.get('set-cookie'));
         // check if token client  is registered.
         let res2;
         let err2;
-        const splitCookieHeaders =
-          setCookie.splitCookiesString(res.headers.get('set-cookie'));
-        const cookies = setCookie.parse(splitCookieHeaders);
         try {
           res2 = await httpClient.get(
             `${registrationURL}?email=alpha@example.com`, {
               agent, headers: {
-                Cookie: `${cookies[0].name}=${cookies[0].value}`
+                Cookie: `cid=${clientId}`
               }
             });
         } catch(e) {
@@ -657,6 +653,7 @@ describe('api', () => {
         const splitCookieHeaders =
           setCookie.splitCookiesString(res.headers.get('set-cookie'));
         const cookies = setCookie.parse(splitCookieHeaders);
+        const sidCookie = cookies.find(x => x.name === 'bedrock.sid');
         // login after authentication
         let res2;
         let err2;
@@ -668,8 +665,8 @@ describe('api', () => {
                 actor,
                 type: 'multifactor'
               }, headers: {
-                Cookie: `${cookies[0].name}=${cookies[0].value};` +
-                  `${cookies[1].name}=${cookies[1].value}`
+                Cookie: `cid=${clientId};` +
+                  `${sidCookie.name}=${sidCookie.value}`
               }
             });
         } catch(e) {
