@@ -14,6 +14,7 @@ const {authenticator} = require('otplib');
 const {agent} = require('bedrock-https-agent');
 const setCookie = require('set-cookie-parser');
 const bcrypt = require('bcrypt');
+const {generateId} = require('bnid');
 
 let accounts;
 let actors;
@@ -335,12 +336,13 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it.skip('should authenticate with a token successfully', async function() {
+    it('should authenticate with a token successfully', async function() {
       const type = 'totp';
       let err;
       stubPassportStub('alpha@example.com');
       const accountId = accounts['alpha@example.com'].account.id;
       const actor = await brAccount.getCapabilities({id: accountId});
+      const clientId = await generateId({fixedLength: true});
       // set a totp for the account with authenticationMethod set to
       // 'token-client-registration'
       const {secret} = await brAuthnToken.set({
@@ -348,6 +350,7 @@ describe('api', () => {
         actor,
         type,
         authenticationMethod: 'token-client-registration',
+        clientId
       });
       const challenge = authenticator.generate(secret);
 
@@ -356,6 +359,9 @@ describe('api', () => {
       try {
         res = await httpClient.post(`${authenticateURL}`, {
           agent,
+          headers: {
+            Cookie: `cid=${clientId}`
+          },
           json: {
             account: accountId,
             type,
@@ -415,7 +421,7 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
-    it.skip('should authenticate with a password', async function() {
+    it('should authenticate with a password', async function() {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const password = 'test-password';
@@ -461,7 +467,7 @@ describe('api', () => {
       res2.data.authenticated.should.equal(true);
       res2.status.should.equal(200);
     });
-    it.skip('should throw error when authenticating with a bad token',
+    it('should throw error when authenticating with a bad token',
       async function() {
         const type = 'totp';
         let err;
@@ -498,13 +504,14 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it.skip('should return `true` if client is registered.',
+    it('should return `true` if client is registered.',
       async function() {
         const type = 'totp';
         let err;
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
         const actor = await brAccount.getCapabilities({id: accountId});
+        const clientId = await generateId({fixedLength: true});
         // set a totp for the account with authenticationMethod set to
         // 'token-client-registration'
         const {secret} = await brAuthnToken.set({
@@ -512,6 +519,7 @@ describe('api', () => {
           actor,
           type,
           authenticationMethod: 'token-client-registration',
+          clientId
         });
         const challenge = authenticator.generate(secret);
 
@@ -520,6 +528,9 @@ describe('api', () => {
         try {
           res = await httpClient.post(`${authenticateURL}`, {
             agent,
+            headers: {
+              Cookie: `cid=${clientId}`
+            },
             json: {
               account: accountId,
               type,
@@ -588,12 +599,13 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it.skip('should successfully login with multifactor authentication',
+    it('should successfully login with multifactor authentication',
       async function() {
         const type = 'totp';
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
         const actor = await brAccount.getCapabilities({id: accountId});
+        const clientId = await generateId({fixedLength: true});
 
         await brAuthnToken.setAuthenticationRequirements({
           account: accountId,
@@ -607,6 +619,7 @@ describe('api', () => {
           actor,
           type,
           authenticationMethod: 'token-client-registration',
+          clientId
         });
         const challenge = authenticator.generate(secret);
         // authenticate with the token
@@ -615,6 +628,9 @@ describe('api', () => {
         try {
           res = await httpClient.post(`${authenticateURL}`, {
             agent,
+            headers: {
+              Cookie: `cid=${clientId}`
+            },
             json: {
               actor,
               account: accountId,
@@ -717,7 +733,7 @@ describe('api', () => {
           'The email address and password or token combination is incorrect.'
         );
       });
-    it.skip('should successfully login if email and password are correct',
+    it('should successfully login if email and password are correct',
       async function() {
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
