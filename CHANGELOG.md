@@ -1,5 +1,15 @@
 # bedrock-authn-token-http ChangeLog
 
+## 2.0.0 - 2021-04-23
+
+### Added
+- **BREAKING**: Added `clientId` generation and `brAuthnToken.clients.set` to `typeRoute` post function.
+- **BREAKING**: Added ability to get `clientId` from cookie in the `authenticate` post function.
+
+### Changed
+- Updated tests to reflect the latest code changes.
+
+
 ## 1.4.2 - 2021-04-21
 
 ### Fixed

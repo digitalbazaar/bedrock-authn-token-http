@@ -286,9 +286,9 @@ describe('api', () => {
       assertNoError(err2);
       should.exist(result);
       result.should.be.an('object');
-      result.filteredTokens.length.should.equal(1);
-      result.filteredTokens[0].should.be.an('object');
-      result.filteredTokens[0].should.have.keys([
+      result.tokens.length.should.equal(1);
+      result.tokens[0].should.be.an('object');
+      result.tokens[0].should.have.keys([
         'authenticationMethod', 'requiredAuthenticationMethods', 'id', 'salt',
         'sha256', 'expires'
       ]);
@@ -298,7 +298,7 @@ describe('api', () => {
       try {
         res2 = await httpClient.delete(
           `${baseURL}/${type}?account=${accountId}&tokenId=${result
-            .filteredTokens[0].id}`, {
+            .tokens[0].id}`, {
             agent
           });
       } catch(e) {
@@ -326,7 +326,7 @@ describe('api', () => {
       assertNoError(err4);
       should.exist(result2);
       result2.should.be.an('object');
-      result2.filteredTokens.should.eql([]);
+      result2.tokens.should.eql([]);
     });
   });
   describe('post /routes.authenticate', () => {
