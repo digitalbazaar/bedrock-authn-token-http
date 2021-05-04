@@ -19,6 +19,7 @@ require('bedrock-authn-token');
 require('bedrock-permission');
 require('bedrock-authn-token-http');
 require('bedrock-https-agent');
+require('bedrock-session-mongodb');
 require('bedrock-test');
 
 bedrock.start();

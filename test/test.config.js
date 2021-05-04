@@ -32,3 +32,5 @@ roles['account.registered'] = {
     permissions.ACCOUNT_INSERT.id
   ]
 };
+
+config.express.useSession = true;
