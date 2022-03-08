@@ -45,27 +45,6 @@ describe('api', () => {
       // replace stub with an empty stub.
       passportStub.callsFake((req, res, next) => next());
     });
-    it('should throw error if type is not given', async function() {
-      const type = '';
-      const accountId = accounts['alpha@example.com'].account.id;
-      let err;
-      let res;
-      stubPassportStub('alpha@example.com');
-      try {
-        res = await httpClient.post(`${baseURL}/${type}`, {
-          agent, json: {
-            account: accountId
-          }
-        });
-      } catch(e) {
-        err = e;
-      }
-      should.exist(err);
-      should.not.exist(res);
-      err.name.should.equal('HTTPError');
-      err.message.should.equal('Not Found');
-      err.status.should.equal(404);
-    });
     it('should create a `nonce` successfully', async function() {
       const type = 'nonce';
       let err;
