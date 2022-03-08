@@ -21,7 +21,7 @@
     "bedrock-mongodb": "^8.4.0",
     "bedrock-passport": "^8.0.2",
     "bedrock-server": "^3.1.0",
-    "bedrock-session-mongodb": "^4.1.0",
+    "bedrock-session-mongodb": "^4.2.0",
     "bedrock-test": "^6.0.0",
     "bedrock-validation": "^5.5.0",
     "cross-env": "^7.0.2",
