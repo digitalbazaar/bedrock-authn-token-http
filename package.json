@@ -24,17 +24,16 @@
   "homepage": "https://github.com/digitalbazaar/bedrock-authn-token-http",
   "dependencies": {
     "bnid": "^2.0.0",
-    "express-async-handler": "^1.1.4",
     "passport-local": "^1.0.0",
     "passport-strategy": "^1.0.0"
   },
   "peerDependencies": {
-    "bedrock": "1.12.1 - 4.x",
-    "bedrock-account": "3.x - 5.x",
-    "bedrock-authn-token": "^4.0.0",
-    "bedrock-express": "2.0.8 - 4.x",
-    "bedrock-passport": "5.x - 6.x",
-    "bedrock-validation": "^4.5.0"
+    "bedrock": "^4.4.3",
+    "bedrock-account": "^6.1.0",
+    "bedrock-authn-token": "^7.0.0",
+    "bedrock-express": "^6.2.2",
+    "bedrock-passport": "^8.0.2",
+    "bedrock-validation": "^5.5.0"
   },
   "devDependencies": {
     "eslint": "^7.3.1",

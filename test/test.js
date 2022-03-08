@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 const bedrock = require('bedrock');
 const sinon = require('sinon');
@@ -16,7 +16,6 @@ require('bedrock-express');
 require('bedrock-account');
 require('bedrock-account-http');
 require('bedrock-authn-token');
-require('bedrock-permission');
 require('bedrock-authn-token-http');
 require('bedrock-https-agent');
 require('bedrock-session-mongodb');

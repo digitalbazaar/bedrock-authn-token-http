@@ -1,5 +1,18 @@
 # bedrock-authn-token-http ChangeLog
 
+## 3.0.0 - 2022-03-xx
+
+### Changed
+- **BREAKING**: Use `bedrock-account@6` which removes `bedrock-permission`
+  including concepts such as `actor`.
+- **BREAKING**: Updated peer dependencies, use:
+  - `bedrock@4.4`
+  - `bedrock-account@6.1`
+  - `bedrock-authn-token@7`
+  - `bedrock-express@6.2`
+  - `bedrock-passport@8`
+  - `bedrock-validation@5.5`
+
 ## 2.0.0 - 2021-05-04
 
 ### Added

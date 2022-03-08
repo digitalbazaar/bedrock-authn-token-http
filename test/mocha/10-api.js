@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -8,7 +8,6 @@ const {config} = bedrock;
 const helpers = require('./helpers');
 const mockData = require('./mock.data');
 const {httpClient} = require('@digitalbazaar/http-client');
-const brAccount = require('bedrock-account');
 const brAuthnToken = require('bedrock-authn-token');
 const {authenticator} = require('otplib');
 const {agent} = require('bedrock-https-agent');
@@ -17,12 +16,10 @@ const bcrypt = require('bcrypt');
 const {generateId} = require('bnid');
 
 let accounts;
-let actors;
 
 function stubPassportStub(email) {
   passportStub.callsFake((req, res, next) => {
     req.user = {
-      actor: actors[email],
       account: accounts[email].account
     };
     next();
@@ -42,7 +39,6 @@ describe('api', () => {
   describe('post /', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -90,7 +86,7 @@ describe('api', () => {
       res.status.should.equal(204);
       should.not.exist(res.data);
     });
-    it('should create a `totp` successfully', async function() {
+    it('should create a `totp` token', async function() {
       const type = 'totp';
       let err;
       let res;
@@ -136,7 +132,7 @@ describe('api', () => {
         err.message.should.equal('Could not create authentication token;' +
           ' authentication required.');
       });
-    it('should create `nonce` successfully without authentication',
+    it('should create `nonce` without authentication',
       async function() {
         const type = 'nonce';
         let err;
@@ -156,7 +152,7 @@ describe('api', () => {
         res.status.should.equal(204);
         should.not.exist(res.data);
       });
-    it('should create "password" successfully', async function() {
+    it('should create "password"', async function() {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const password = 'some-password';
@@ -184,7 +180,6 @@ describe('api', () => {
   describe('get /salt', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -242,7 +237,6 @@ describe('api', () => {
   describe('delete /', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -273,11 +267,9 @@ describe('api', () => {
       // that is created above.
       let err2;
       let result;
-      const actor = await brAccount.getCapabilities({id: accountId});
       try {
         result = await brAuthnToken.getAll({
-          account: accountId,
-          actor,
+          accountId,
           type: 'nonce',
         });
       } catch(e) {
@@ -315,8 +307,7 @@ describe('api', () => {
       let result2;
       try {
         result2 = await brAuthnToken.getAll({
-          account: accountId,
-          actor,
+          accountId,
           type: 'nonce',
           id: 'zW34DhUd4scRCfNNnsgk6t5'
         });
@@ -332,7 +323,6 @@ describe('api', () => {
   describe('post /routes.authenticate', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -344,13 +334,11 @@ describe('api', () => {
       let err;
       stubPassportStub('alpha@example.com');
       const accountId = accounts['alpha@example.com'].account.id;
-      const actor = await brAccount.getCapabilities({id: accountId});
       const clientId = await generateId({fixedLength: true});
       // set a totp for the account with authenticationMethod set to
       // 'token-client-registration'
       const {secret} = await brAuthnToken.set({
-        account: accountId,
-        actor,
+        accountId,
         type,
         authenticationMethod: 'token-client-registration',
         clientId
@@ -388,13 +376,11 @@ describe('api', () => {
       // remove the token and set a new `totp` token without an
       // authenticationMethod.
       await brAuthnToken.remove({
-        account: accountId,
-        actor,
+        accountId,
         type,
       });
       const {secret: secret2} = await brAuthnToken.set({
-        account: accountId,
-        actor,
+        accountId,
         type
       });
       const challenge2 = authenticator.generate(secret2);
@@ -500,7 +486,6 @@ describe('api', () => {
   describe('get /routes.registration', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -513,13 +498,11 @@ describe('api', () => {
         let err;
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
-        const actor = await brAccount.getCapabilities({id: accountId});
         const clientId = await generateId({fixedLength: true});
         // set a totp for the account with authenticationMethod set to
         // 'token-client-registration'
         const {secret} = await brAuthnToken.set({
-          account: accountId,
-          actor,
+          accountId,
           type,
           authenticationMethod: 'token-client-registration',
           clientId
@@ -591,7 +574,6 @@ describe('api', () => {
   describe('get /routes.login', () => {
     beforeEach(async function setup() {
       await helpers.prepareDatabase(mockData);
-      actors = await helpers.getActors(mockData);
       accounts = mockData.accounts;
     });
     afterEach(async function() {
@@ -603,19 +585,16 @@ describe('api', () => {
         const type = 'totp';
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
-        const actor = await brAccount.getCapabilities({id: accountId});
         const clientId = await generateId({fixedLength: true});
 
         await brAuthnToken.setAuthenticationRequirements({
-          account: accountId,
-          actor,
+          accountId,
           requiredAuthenticationMethods: ['token-client-registration'],
         });
         // set a totp for the account with authenticationMethod set to
         // 'token-client-registration'
         const {secret} = await brAuthnToken.set({
-          account: accountId,
-          actor,
+          accountId,
           type,
           authenticationMethod: 'token-client-registration',
           clientId
@@ -631,7 +610,6 @@ describe('api', () => {
               Cookie: `cid=${clientId}`
             },
             json: {
-              actor,
               account: accountId,
               type,
               challenge,
@@ -665,7 +643,6 @@ describe('api', () => {
             `${loginURL}`, {
               agent, json: {
                 account: accountId,
-                actor,
                 type: 'multifactor'
               }, headers: {
                 Cookie: `cid=${clientId};` +
@@ -684,7 +661,6 @@ describe('api', () => {
       async function() {
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
-        const actor = await brAccount.getCapabilities({id: accountId});
         let res;
         let err;
         try {
@@ -692,7 +668,6 @@ describe('api', () => {
             `${loginURL}`, {
               agent, json: {
                 account: accountId,
-                actor,
                 type: 'multifactor'
               }
             });
@@ -709,7 +684,6 @@ describe('api', () => {
       async function() {
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
-        const actor = await brAccount.getCapabilities({id: accountId});
         let res;
         let err;
         try {
@@ -717,7 +691,6 @@ describe('api', () => {
             `${loginURL}`, {
               agent, json: {
                 account: accountId,
-                actor,
                 email: 'alpha@example.com',
                 password: 'incorrect-password'
               }
@@ -737,7 +710,6 @@ describe('api', () => {
       async function() {
         stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
-        const actor = await brAccount.getCapabilities({id: accountId});
         const email = 'alpha@example.com';
         const type = 'password';
         const password = 'some-password';
@@ -770,7 +742,6 @@ describe('api', () => {
             `${loginURL}`, {
               agent, json: {
                 account: accountId,
-                actor,
                 email,
                 hash,
                 type
