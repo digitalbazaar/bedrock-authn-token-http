@@ -14,7 +14,7 @@
     "bedrock": "^4.4.3",
     "bedrock-account": "^6.1.0",
     "bedrock-account-http": "^4.0.0",
-    "bedrock-authn-token": "^4.0.0",
+    "bedrock-authn-token": "^7.0.0",
     "bedrock-authn-token-http": "file:..",
     "bedrock-express": "^6.2.2",
     "bedrock-https-agent": "^2.0.0",
