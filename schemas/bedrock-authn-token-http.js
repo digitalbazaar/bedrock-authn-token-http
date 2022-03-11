@@ -3,27 +3,14 @@
  */
 'use strict';
 
-const postTokenQuery = {
-  title: 'postTokenQuery',
-  type: 'object',
-  additionalProperties: false,
-  properties: {
-    email: {
-      type: 'string'
-    },
-    account: {
-      type: 'string'
-    },
-    hash: {
-      type: 'string'
-    }
-  }
-};
-
 const postToken = {
   title: 'postToken',
   type: 'object',
   additionalProperties: false,
+  anyOf: [
+    {required: ['email']},
+    {required: ['account']}
+  ],
   properties: {
     email: {
       type: 'string'
@@ -55,6 +42,7 @@ const getTokensQuery = {
   title: 'getTokensQuery',
   type: 'object',
   additionalProperties: false,
+  required: ['email'],
   properties: {
     type: {
       type: 'string',
@@ -70,6 +58,11 @@ const postAuthenticate = {
   title: 'postAuthenticate',
   type: 'object',
   additionalProperties: false,
+  required: ['type'],
+  anyOf: [
+    {required: ['email']},
+    {required: ['account']}
+  ],
   properties: {
     type: {
       type: 'string',
@@ -94,6 +87,10 @@ const postLogin = {
   title: 'postLogin',
   type: 'object',
   additionalProperties: false,
+  anyOf: [
+    {required: ['email']},
+    {required: ['account']}
+  ],
   properties: {
     type: {
       type: 'string',
@@ -118,6 +115,7 @@ const postRequirements = {
   title: 'postRequirements',
   type: 'object',
   additionalProperties: false,
+  required: ['account'],
   properties: {
     account: {
       type: 'string'
@@ -132,6 +130,7 @@ const getAuthenticationRequirements = {
   title: 'getAuthenticationRequirements',
   type: 'object',
   additionalProperties: false,
+  required: ['account'],
   properties: {
     account: {
       type: 'string'
@@ -143,6 +142,7 @@ const getClientRegistrationQuery = {
   title: 'getClientRegistrationQuery',
   type: 'object',
   additionalProperties: false,
+  required: ['email'],
   properties: {
     email: {
       type: 'string'
@@ -154,6 +154,7 @@ const postRecovery = {
   title: 'postRecovery',
   type: 'object',
   additionalProperties: false,
+  required: ['account', 'recoveryEmail'],
   properties: {
     account: {
       type: 'string'
@@ -164,7 +165,7 @@ const postRecovery = {
   }
 };
 
-module.exports = {postTokenQuery, postToken, getTokensQuery, postAuthenticate,
-  postLogin, postRequirements, getAuthenticationRequirements,
-  getClientRegistrationQuery, postRecovery
+module.exports = {postToken, getTokensQuery, postAuthenticate, postLogin,
+  postRequirements, getAuthenticationRequirements, getClientRegistrationQuery,
+  postRecovery
 };
