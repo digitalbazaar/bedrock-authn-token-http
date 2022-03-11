@@ -33,6 +33,20 @@ const postToken = {
     },
     hash: {
       type: 'string'
+    },
+    authenticationMethod: {
+      type: 'string'
+    },
+    requiredAuthenticationMethods: {
+      type: 'array'
+    },
+    typeOptions: {
+      type: 'object',
+      properties: {
+        entryStyle: {
+          type: 'string'
+        }
+      }
     }
   }
 };
