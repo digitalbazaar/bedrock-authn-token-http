@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/digitalbazaar/bedrock-authn-token-http",
   "dependencies": {
+    "bedrock-validation": "^5.5.0",
     "bnid": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-strategy": "^1.0.0"
