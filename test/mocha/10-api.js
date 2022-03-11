@@ -54,7 +54,9 @@ describe('api', () => {
       try {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
-            account: accountId
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
           }
         });
       } catch(e) {
@@ -74,7 +76,9 @@ describe('api', () => {
       try {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
-            account: accountId
+            account: accountId,
+            requiredAuthenticationMethods: ['totp-challenge'],
+            authenticationMethod: 'totp-challenge'
           }
         });
       } catch(e) {
@@ -99,7 +103,9 @@ describe('api', () => {
         try {
           res = await httpClient.post(`${baseURL}/${type}`, {
             agent, json: {
-              email: 'alpha@example.com'
+              email: 'alpha@example.com',
+              requiredAuthenticationMethods: ['totp-challenge'],
+              authenticationMethod: 'totp-challenge'
             }
           });
         } catch(e) {
@@ -120,7 +126,9 @@ describe('api', () => {
         try {
           res = await httpClient.post(`${baseURL}/${type}`, {
             agent, json: {
-              email: 'alpha@example.com'
+              email: 'alpha@example.com',
+              requiredAuthenticationMethods: ['login-email-challenge'],
+              authenticationMethod: 'login-email-challenge'
             }
           });
         } catch(e) {
@@ -144,7 +152,9 @@ describe('api', () => {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
             account: accountId,
-            hash
+            hash,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
           }
         });
       } catch(e) {
@@ -173,7 +183,9 @@ describe('api', () => {
       // set a nonce for the account
       await httpClient.post(`${baseURL}/${type}`, {
         agent, json: {
-          email: 'alpha@example.com'
+          email: 'alpha@example.com',
+          requiredAuthenticationMethods: ['login-email-challenge'],
+          authenticationMethod: 'login-email-challenge'
         }
       });
       // get the salt for the nonce token
@@ -232,7 +244,9 @@ describe('api', () => {
       try {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
-            account: accountId
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
           }
         });
       } catch(e) {
@@ -402,7 +416,9 @@ describe('api', () => {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
             account: accountId,
-            hash
+            hash,
+            requiredAuthenticationMethods: ['token-client-registration'],
+            authenticationMethod: 'token-client-registration'
           }
         });
       } catch(e) {
@@ -703,7 +719,9 @@ describe('api', () => {
           res = await httpClient.post(`${baseURL}/${type}`, {
             agent, json: {
               account: accountId,
-              hash
+              hash,
+              requiredAuthenticationMethods: ['login-email-challenge'],
+              authenticationMethod: 'login-email-challenge'
             }
           });
         } catch(e) {

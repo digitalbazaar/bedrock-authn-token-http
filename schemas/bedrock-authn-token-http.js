@@ -26,7 +26,16 @@ const postToken = {
       type: 'string'
     },
     requiredAuthenticationMethods: {
-      type: 'array'
+      type: 'array',
+      items: {
+        type: 'string',
+        enum: [
+          'token-client-registration',
+          'login-email-challenge',
+          'totp-challenge',
+          'recovery-email-challenge'
+        ]
+      }
     },
     typeOptions: {
       type: 'object',
@@ -43,7 +52,7 @@ const getTokensQuery = {
   title: 'getTokensQuery',
   type: 'object',
   additionalProperties: false,
-  required: ['email', 'type'],
+  required: ['email'],
   properties: {
     type: {
       type: 'string',
@@ -91,10 +100,6 @@ const postLogin = {
   type: 'object',
   additionalProperties: false,
   required: ['type'],
-  anyOf: [
-    {required: ['email']},
-    {required: ['account']}
-  ],
   properties: {
     type: {
       type: 'string',
@@ -122,7 +127,16 @@ const postRequirements = {
       type: 'string'
     },
     requiredAuthenticationMethods: {
-      type: 'array'
+      type: 'array',
+      items: {
+        type: 'string',
+        enum: [
+          'token-client-registration',
+          'login-email-challenge',
+          'totp-challenge',
+          'recovery-email-challenge'
+        ]
+      }
     }
   }
 };
