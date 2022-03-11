@@ -42,7 +42,7 @@ const getTokensQuery = {
   title: 'getTokensQuery',
   type: 'object',
   additionalProperties: false,
-  required: ['email'],
+  required: ['email', 'type'],
   properties: {
     type: {
       type: 'string',
@@ -60,8 +60,10 @@ const postAuthenticate = {
   additionalProperties: false,
   required: ['type'],
   anyOf: [
-    {required: ['email']},
-    {required: ['account']}
+    {required: ['email', 'hash']},
+    {required: ['account', 'hash']},
+    {required: ['email', 'challenge']},
+    {required: ['account', 'challenge']}
   ],
   properties: {
     type: {
@@ -87,6 +89,7 @@ const postLogin = {
   title: 'postLogin',
   type: 'object',
   additionalProperties: false,
+  required: ['type'],
   anyOf: [
     {required: ['email']},
     {required: ['account']}
@@ -104,9 +107,6 @@ const postLogin = {
     },
     hash: {
       type: 'string'
-    },
-    password: {
-      type: 'string'
     }
   }
 };
@@ -115,7 +115,7 @@ const postRequirements = {
   title: 'postRequirements',
   type: 'object',
   additionalProperties: false,
-  required: ['account'],
+  required: ['account', 'requiredAuthenticationMethods'],
   properties: {
     account: {
       type: 'string'
