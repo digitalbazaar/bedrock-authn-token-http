@@ -123,7 +123,7 @@ const postRequirements = {
       type: 'string'
     },
     requiredAuthenticationMethods: {
-      type: 'string'
+      type: 'array'
     }
   }
 };

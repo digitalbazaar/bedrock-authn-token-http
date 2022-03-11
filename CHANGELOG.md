@@ -1,5 +1,11 @@
 # bedrock-authn-token-http ChangeLog
 
+## 4.0.0 - 2022-xx-xx
+
+### Added
+- **BREAKING**: Add validation to all endpoints using `createValidateMiddleware`
+  from `bedrock-validation@5.5`.
+
 ## 3.0.0 - 2022-03-08
 
 ### Changed
