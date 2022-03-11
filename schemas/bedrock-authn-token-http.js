@@ -7,6 +7,7 @@ const postToken = {
   title: 'postToken',
   type: 'object',
   additionalProperties: false,
+  required: ['authenticationMethod', 'requiredAuthenticationMethods'],
   anyOf: [
     {required: ['email']},
     {required: ['account']}
