@@ -6,6 +6,7 @@
 const postTokenQuery = {
   title: 'postTokenQuery',
   type: 'object',
+  additionalProperties: false,
   properties: {
     email: {
       type: 'string'
@@ -22,6 +23,7 @@ const postTokenQuery = {
 const postToken = {
   title: 'postToken',
   type: 'object',
+  additionalProperties: false,
   properties: {
     email: {
       type: 'string'
@@ -38,6 +40,7 @@ const postToken = {
 const getTokensQuery = {
   title: 'getTokensQuery',
   type: 'object',
+  additionalProperties: false,
   properties: {
     type: {
       type: 'string',
@@ -52,6 +55,7 @@ const getTokensQuery = {
 const postAuthenticate = {
   title: 'postAuthenticate',
   type: 'object',
+  additionalProperties: false,
   properties: {
     type: {
       type: 'string',
@@ -75,6 +79,7 @@ const postAuthenticate = {
 const postLogin = {
   title: 'postLogin',
   type: 'object',
+  additionalProperties: false,
   properties: {
     type: {
       type: 'string',
@@ -98,6 +103,7 @@ const postLogin = {
 const postRequirements = {
   title: 'postRequirements',
   type: 'object',
+  additionalProperties: false,
   properties: {
     account: {
       type: 'string'
@@ -111,6 +117,7 @@ const postRequirements = {
 const getAuthenticationRequirements = {
   title: 'getAuthenticationRequirements',
   type: 'object',
+  additionalProperties: false,
   properties: {
     account: {
       type: 'string'
@@ -121,6 +128,7 @@ const getAuthenticationRequirements = {
 const getClientRegistrationQuery = {
   title: 'getClientRegistrationQuery',
   type: 'object',
+  additionalProperties: false,
   properties: {
     email: {
       type: 'string'
@@ -131,6 +139,7 @@ const getClientRegistrationQuery = {
 const postRecovery = {
   title: 'postRecovery',
   type: 'object',
+  additionalProperties: false,
   properties: {
     account: {
       type: 'string'
