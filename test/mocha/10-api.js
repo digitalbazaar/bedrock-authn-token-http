@@ -191,7 +191,7 @@ describe('api', () => {
       // get the salt for the nonce token
       try {
         res = await httpClient.get(
-          `${baseURL}/${type}/salt?email=alpha@example.com&type=nonce`, {
+          `${baseURL}/${type}/salt?email=alpha@example.com`, {
             agent
           });
       } catch(e) {
@@ -213,7 +213,7 @@ describe('api', () => {
         // attempt to get salt for an account that has no tokens.
         try {
           res = await httpClient.get(
-            `${baseURL}/${type}/salt?email=beta@example.com&type=nonce`, {
+            `${baseURL}/${type}/salt?email=beta@example.com`, {
               agent
             });
         } catch(e) {
