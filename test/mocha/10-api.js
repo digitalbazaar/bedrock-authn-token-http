@@ -416,9 +416,7 @@ describe('api', () => {
         res = await httpClient.post(`${baseURL}/${type}`, {
           agent, json: {
             account: accountId,
-            hash,
-            requiredAuthenticationMethods: ['token-client-registration'],
-            authenticationMethod: 'token-client-registration'
+            hash
           }
         });
       } catch(e) {
