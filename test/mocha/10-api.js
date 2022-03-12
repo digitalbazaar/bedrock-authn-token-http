@@ -717,9 +717,7 @@ describe('api', () => {
           res = await httpClient.post(`${baseURL}/${type}`, {
             agent, json: {
               account: accountId,
-              hash,
-              requiredAuthenticationMethods: ['login-email-challenge'],
-              authenticationMethod: 'login-email-challenge'
+              hash
             }
           });
         } catch(e) {
