@@ -1,5 +1,18 @@
 # bedrock-authn-token-http ChangeLog
 
+## 4.1.0 - 2022-03-xx
+
+### Changed
+- Update peer deps:
+  - `bedrock@4.5`
+  - `bedrock-account@6.3.2`
+  - `bedrock-authn-token@7.1.1`
+  - `bedrock-express@6.4.1`
+  - `bedrock-passport@8.1.0`
+  - `bedrock-validation@5.6.3`.
+- Update internals to use esm style and use `esm.js` to
+  transpile to CommonJS.
+
 ## 4.0.1 - 2022-03-12
 
 ### Fixed

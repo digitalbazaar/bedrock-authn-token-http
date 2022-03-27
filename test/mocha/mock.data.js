@@ -7,10 +7,12 @@ const {util: {uuid}} = require('bedrock');
 
 const accounts = exports.accounts = {};
 
-const email = 'alpha@example.com';
-accounts[email] = {};
-accounts[email].account = _createAccount(email);
-accounts[email].meta = {};
+const emails = ['alpha@example.com', 'beta@example.com'];
+for(const email of emails) {
+  accounts[email] = {};
+  accounts[email].account = _createAccount(email);
+  accounts[email].meta = {};
+}
 
 function _createAccount(email) {
   const newAccount = {

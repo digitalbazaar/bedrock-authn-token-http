@@ -3,28 +3,60 @@
  */
 'use strict';
 
-const bedrock = require('bedrock');
-const {config} = bedrock;
-const helpers = require('./helpers');
-const mockData = require('./mock.data');
-const {httpClient} = require('@digitalbazaar/http-client');
-const brAuthnToken = require('bedrock-authn-token');
 const {authenticator} = require('otplib');
 const {agent} = require('bedrock-https-agent');
-const setCookie = require('set-cookie-parser');
+const bedrock = require('bedrock');
+const brAuthnToken = require('bedrock-authn-token');
 const bcrypt = require('bcrypt');
+const {config} = bedrock;
 const {generateId} = require('bnid');
+const helpers = require('./helpers');
+const {httpClient} = require('@digitalbazaar/http-client');
+const mockData = require('./mock.data');
+const setCookie = require('set-cookie-parser');
+const {passport} = require('bedrock-passport');
+const {_deserializeUser} = require('bedrock-passport');
 
 let accounts;
 
+const passportStubSettings = {email: null};
 function stubPassportStub(email) {
-  passportStub.callsFake((req, res, next) => {
-    req.user = {
-      account: accounts[email].account
-    };
-    next();
-  });
+  passportStubSettings.email = email;
 }
+
+passportStub.callsFake((strategyName, options, callback) => {
+  // if no email given, call original `passport.authenticate`
+  const {email} = passportStubSettings;
+  if(!email) {
+    return passportStub._original.call(
+      passport, strategyName, options, callback);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  return async function(req, res, next) {
+    req._sessionManager = passport._sm;
+    req.isAuthenticated = req.isAuthenticated || (() => !!req.user);
+    req.login = (user, callback) => {
+      req._sessionManager.logIn(req, user, function(err) {
+        if(err) {
+          req.user = null;
+          return callback(err);
+        }
+        callback();
+      });
+    };
+    let user = false;
+    try {
+      const {account} = accounts[email] || {account: {id: 'does-not-exist'}};
+      user = await _deserializeUser({
+        accountId: account.id
+      });
+    } catch(e) {
+      return callback(e);
+    }
+    callback(null, user);
+  };
+});
 
 const baseURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.basePath}`;
@@ -42,8 +74,7 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
     it('should create a `nonce` successfully', async function() {
       const type = 'nonce';
@@ -172,8 +203,7 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
     it('should be able to get salt for a token', async function() {
       const type = 'nonce';
@@ -231,8 +261,7 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
     it('should delete a token', async function() {
       const type = 'nonce';
@@ -319,8 +348,7 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
     it('should authenticate with a token successfully', async function() {
       const type = 'totp';
@@ -482,8 +510,7 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
     it('should return `true` if client is registered.',
       async function() {
@@ -570,13 +597,92 @@ describe('api', () => {
       accounts = mockData.accounts;
     });
     afterEach(async function() {
-      // replace stub with an empty stub.
-      passportStub.callsFake((req, res, next) => next());
+      stubPassportStub(null);
     });
+    it('should fail login if email and password combination is incorrect',
+      async function() {
+        const accountId = accounts['alpha@example.com'].account.id;
+        let res;
+        let err;
+        try {
+          res = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                email: 'alpha@example.com',
+                type: 'password',
+                hash: 'incorrect-password'
+              }
+            });
+        } catch(e) {
+          err = e;
+        }
+        should.exist(err);
+        should.not.exist(res);
+        err.name.should.equal('HTTPError');
+        err.status.should.equal(400);
+        err.message.should.equal(
+          'The email address and password or token combination is incorrect.'
+        );
+      });
+    it('should successfully login if email and password are correct',
+      async function() {
+        const accountId = accounts['alpha@example.com'].account.id;
+        const email = 'alpha@example.com';
+        const type = 'password';
+        const password = 'some-password';
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+
+        // disable authentication to allow password to be set
+        stubPassportStub(email);
+
+        let err;
+        let res;
+        // set password for the account
+        try {
+          res = await httpClient.post(`${baseURL}/${type}`, {
+            agent, json: {
+              account: accountId,
+              hash
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
+        should.not.exist(res.data);
+
+        // now clear passport stub to ensure authentication is checked
+        stubPassportStub(null);
+
+        // login
+        let res3;
+        let err3;
+        try {
+          res3 = await httpClient.post(
+            `${loginURL}`, {
+              agent, json: {
+                account: accountId,
+                email,
+                hash,
+                type
+              }
+            });
+        } catch(e) {
+          err3 = e;
+        }
+        assertNoError(err3);
+        should.exist(res3);
+        res3.status.should.equal(200);
+        should.exist(res3.data);
+        res3.data.should.be.an('object');
+      });
     it('should successfully login with multifactor authentication',
       async function() {
         const type = 'totp';
-        stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
         const clientId = await generateId({fixedLength: true});
 
@@ -652,7 +758,6 @@ describe('api', () => {
       });
     it('should fail multifactor login if account is not authenticated',
       async function() {
-        stubPassportStub('alpha@example.com');
         const accountId = accounts['alpha@example.com'].account.id;
         let res;
         let err;
@@ -672,83 +777,6 @@ describe('api', () => {
         err.name.should.equal('HTTPError');
         err.status.should.equal(400);
         err.message.should.equal('Not authenticated.');
-      });
-    it('should fail login if email and password combination is incorrect',
-      async function() {
-        stubPassportStub('alpha@example.com');
-        const accountId = accounts['alpha@example.com'].account.id;
-        let res;
-        let err;
-        try {
-          res = await httpClient.post(
-            `${loginURL}`, {
-              agent, json: {
-                account: accountId,
-                email: 'alpha@example.com',
-                type: 'password',
-                hash: 'incorrect-password'
-              }
-            });
-        } catch(e) {
-          err = e;
-        }
-        should.exist(err);
-        should.not.exist(res);
-        err.name.should.equal('HTTPError');
-        err.status.should.equal(400);
-        err.message.should.equal(
-          'The email address and password or token combination is incorrect.'
-        );
-      });
-    it('should successfully login if email and password are correct',
-      async function() {
-        stubPassportStub('alpha@example.com');
-        const accountId = accounts['alpha@example.com'].account.id;
-        const email = 'alpha@example.com';
-        const type = 'password';
-        const password = 'some-password';
-        const saltRounds = 10;
-        const hash = await bcrypt.hash(password, saltRounds);
-
-        let err;
-        let res;
-        // set password for the account
-        try {
-          res = await httpClient.post(`${baseURL}/${type}`, {
-            agent, json: {
-              account: accountId,
-              hash
-            }
-          });
-        } catch(e) {
-          err = e;
-        }
-        assertNoError(err);
-        should.exist(res);
-        res.status.should.equal(204);
-        should.not.exist(res.data);
-
-        // login
-        let res3;
-        let err3;
-        try {
-          res3 = await httpClient.post(
-            `${loginURL}`, {
-              agent, json: {
-                account: accountId,
-                email,
-                hash,
-                type
-              }
-            });
-        } catch(e) {
-          err3 = e;
-        }
-        assertNoError(err3);
-        should.exist(res3);
-        res3.status.should.equal(200);
-        should.exist(res3.data);
-        res3.data.should.be.an('object');
       });
   });
 });

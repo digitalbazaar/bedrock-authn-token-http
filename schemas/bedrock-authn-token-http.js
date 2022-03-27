@@ -1,8 +1,6 @@
 /*!
  * Copyright (c) 2022 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
 const postToken = {
   title: 'postToken',
   type: 'object',
@@ -166,7 +164,7 @@ const postRecovery = {
   }
 };
 
-module.exports = {postToken, getTokensQuery, postAuthenticate, postLogin,
+export {postToken, getTokensQuery, postAuthenticate, postLogin,
   postRequirements, getAuthenticationRequirements, getClientRegistrationQuery,
   postRecovery
 };
