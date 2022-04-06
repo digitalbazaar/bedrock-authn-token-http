@@ -1,5 +1,13 @@
 # bedrock-authn-token-http ChangeLog
 
+## 5.0.0 - 2022-04-xx
+
+### Changed
+- **BREAKING**: Rename package to `@bedrock/authn-token-http`.
+- **BREAKING**: Convert to module (ESM).
+- **BREAKING**: Remove default export.
+- **BREAKING**: Require node 14.x.
+
 ## 4.1.0 - 2022-03-27
 
 ### Changed

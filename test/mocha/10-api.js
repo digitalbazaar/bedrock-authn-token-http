@@ -1,21 +1,19 @@
 /*!
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
-const {authenticator} = require('otplib');
-const {agent} = require('bedrock-https-agent');
-const bedrock = require('bedrock');
-const brAuthnToken = require('bedrock-authn-token');
-const bcrypt = require('bcrypt');
-const {config} = bedrock;
+import * as brAuthnToken from '@bedrock/authn-token';
+import * as helpers from './helpers.js';
+import {authenticator} from 'otplib';
+import {agent} from '@bedrock/https-agent';
+import bcrypt from 'bcrypt';
+import {config} from '@bedrock/core';
+import {createRequire} from 'module';
+import {mockData} from './mock.data.js';
+import {passport, _deserializeUser} from '@bedrock/passport';
+import setCookie from 'set-cookie-parser';
+const require = createRequire(import.meta.url);
 const {generateId} = require('bnid');
-const helpers = require('./helpers');
 const {httpClient} = require('@digitalbazaar/http-client');
-const mockData = require('./mock.data');
-const setCookie = require('set-cookie-parser');
-const {passport} = require('bedrock-passport');
-const {_deserializeUser} = require('bedrock-passport');
 
 let accounts;
 

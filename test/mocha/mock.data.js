@@ -1,11 +1,12 @@
 /*!
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
+import * as bedrock from '@bedrock/core';
 
-const {util: {uuid}} = require('bedrock');
+const {util: {uuid}} = bedrock;
 
-const accounts = exports.accounts = {};
+export const mockData = {};
+const accounts = mockData.accounts = {};
 
 const emails = ['alpha@example.com', 'beta@example.com'];
 for(const email of emails) {

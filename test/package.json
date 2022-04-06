@@ -1,42 +1,43 @@
 {
   "name": "bedrock-authn-token-http-test",
   "version": "0.0.1-0",
+  "type": "module",
   "private": true,
   "scripts": {
     "test": "node --preserve-symlinks test.js test",
-    "coverage": "cross-env NODE_ENV=test ESM_OPTIONS='{cache:false}' nyc --reporter=lcov --reporter=text-summary npm test",
-    "coverage-ci": "cross-env NODE_ENV=test ESM_OPTIONS='{cache:false}' nyc --reporter=lcovonly npm test",
-    "coverage-report": "nyc report"
+    "coverage": "cross-env NODE_ENV=test c8 --reporter=lcov --reporter=text-summary npm test",
+    "coverage-ci": "cross-env NODE_ENV=test c8 --reporter=lcovonly npm test",
+    "coverage-report": "c8 report"
   },
   "dependencies": {
+    "@bedrock/core": "^5.0.0",
+    "@bedrock/account": "^7.0.0",
+    "@bedrock/account-http": "^5.0.0",
+    "@bedrock/authn-token": "^8.0.0",
+    "@bedrock/authn-token-http": "file:..",
+    "@bedrock/express": "^7.0.0",
+    "@bedrock/https-agent": "^3.0.0",
+    "@bedrock/mongodb": "^9.0.0",
+    "@bedrock/passport": "^9.0.0",
+    "@bedrock/server": "^4.0.0",
+    "@bedrock/session-mongodb": "^5.0.0",
+    "@bedrock/test": "^7.0.0",
+    "@bedrock/validation": "^6.0.0",
     "@digitalbazaar/http-client": "^1.0.0",
     "bcrypt": "^5.0.0",
-    "bedrock": "^4.5.0",
-    "bedrock-account": "^6.3.2",
-    "bedrock-account-http": "^4.2.1",
-    "bedrock-authn-token": "^7.1.1",
-    "bedrock-authn-token-http": "file:..",
-    "bedrock-express": "^6.4.1",
-    "bedrock-https-agent": "^2.3.0",
-    "bedrock-mongodb": "^8.5.0",
-    "bedrock-passport": "^8.1.0",
-    "bedrock-server": "^3.2.1",
-    "bedrock-session-mongodb": "^4.3.0",
-    "bedrock-test": "^6.0.0",
-    "bedrock-validation": "^5.6.3",
+    "c8": "^7.11.0",
     "cross-env": "^7.0.2",
-    "nyc": "^15.1.0",
     "otplib": "^12.0.1",
     "set-cookie-parser": "^2.4.6",
     "sinon": "^9.0.2"
   },
-  "nyc": {
+  "c8": {
     "excludeNodeModules": false,
     "include": [
-      "node_modules/bedrock-authn-token-http/**"
+      "node_modules/@bedrock/authn-token-http/**"
     ],
     "exclude": [
-      "node_modules/bedrock-authn-token-http/node_modules/**"
+      "node_modules/@bedrock/authn-token-http/node_modules/**"
     ]
   }
 }
