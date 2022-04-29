@@ -7,13 +7,13 @@ import {authenticator} from 'otplib';
 import {agent} from '@bedrock/https-agent';
 import bcrypt from 'bcrypt';
 import {config} from '@bedrock/core';
-import {createRequire} from 'module';
+import {createRequire} from 'node:module';
+import {httpClient} from '@digitalbazaar/http-client';
 import {mockData} from './mock.data.js';
 import {passport, _deserializeUser} from '@bedrock/passport';
 import setCookie from 'set-cookie-parser';
 const require = createRequire(import.meta.url);
 const {generateId} = require('bnid');
-const {httpClient} = require('@digitalbazaar/http-client');
 
 let accounts;
 

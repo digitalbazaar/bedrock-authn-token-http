@@ -164,7 +164,8 @@ const postRecovery = {
   }
 };
 
-export {postToken, getTokensQuery, postAuthenticate, postLogin,
+export {
+  postToken, getTokensQuery, postAuthenticate, postLogin,
   postRequirements, getAuthenticationRequirements, getClientRegistrationQuery,
   postRecovery
 };
