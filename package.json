@@ -29,12 +29,12 @@
     "passport-strategy": "^1.0.0"
   },
   "peerDependencies": {
-    "@bedrock/core": "^5.0.0",
-    "@bedrock/account": "^7.0.0",
-    "@bedrock/authn-token": "^8.0.0",
-    "@bedrock/express": "^7.0.0",
-    "@bedrock/passport": "^9.0.0",
-    "@bedrock/validation": "^6.0.0"
+    "@bedrock/core": "^6.0.0",
+    "@bedrock/account": "^8.0.0",
+    "@bedrock/authn-token": "^9.0.0",
+    "@bedrock/express": "^8.0.0",
+    "@bedrock/passport": "^10.0.0",
+    "@bedrock/validation": "^7.0.0"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

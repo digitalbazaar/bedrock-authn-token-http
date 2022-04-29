@@ -1,5 +1,16 @@
 # bedrock-authn-token-http ChangeLog
 
+## 6.0.0 - 2022-04-xx
+
+### Changed
+- **BREAKING**: Update peer deps:
+  - `@bedrock/core@6`
+  - `@bedrock/account@8`
+  - `@bedrock/authn-token@9`
+  - `@bedrock/express@8`
+  - `@bedrock/passport@10`
+  - `@bedrock/validation@7`.
+
 ## 5.0.0 - 2022-04-06
 
 ### Changed
