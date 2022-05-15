@@ -5,15 +5,12 @@ import * as brAuthnToken from '@bedrock/authn-token';
 import * as helpers from './helpers.js';
 import {authenticator} from 'otplib';
 import {agent} from '@bedrock/https-agent';
-import bcrypt from 'bcrypt';
 import {config} from '@bedrock/core';
-import {createRequire} from 'node:module';
+import {generateId} from 'bnid';
 import {httpClient} from '@digitalbazaar/http-client';
 import {mockData} from './mock.data.js';
 import {passport, _deserializeUser} from '@bedrock/passport';
 import setCookie from 'set-cookie-parser';
-const require = createRequire(import.meta.url);
-const {generateId} = require('bnid');
 
 let accounts;
 
@@ -172,8 +169,9 @@ describe('api', () => {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const password = 'some-password';
-      const saltRounds = 10;
-      const hash = await bcrypt.hash(password, saltRounds);
+      const {hash} = await brAuthnToken._pbkdf2.pbkdf2({
+        secret: password
+      });
       stubPassportStub('alpha@example.com');
       let err;
       let res;
@@ -195,7 +193,7 @@ describe('api', () => {
       should.not.exist(res.data);
     });
   });
-  describe('get /salt', () => {
+  describe('get /hash-parameters', () => {
     before(async function setup() {
       await helpers.prepareDatabase(mockData);
       accounts = mockData.accounts;
@@ -203,7 +201,7 @@ describe('api', () => {
     afterEach(async function() {
       stubPassportStub(null);
     });
-    it('should be able to get salt for a token', async function() {
+    it('should be able to get hash parameters for a token', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -216,10 +214,10 @@ describe('api', () => {
           authenticationMethod: 'login-email-challenge'
         }
       });
-      // get the salt for the nonce token
+      // get the hash parameters for the nonce token
       try {
         res = await httpClient.get(
-          `${baseURL}/${type}/salt?email=alpha@example.com`, {
+          `${baseURL}/${type}/hash-parameters?email=alpha@example.com`, {
             agent
           });
       } catch(e) {
@@ -230,7 +228,7 @@ describe('api', () => {
       res.status.should.equal(200);
       should.exist(res.data);
       res.data.should.be.an('object');
-      res.data.should.have.keys(['salt']);
+      res.data.should.have.keys(['hashParameters']);
     });
     it('should throw error if there is no token for the account or email',
       async function() {
@@ -238,10 +236,10 @@ describe('api', () => {
         let err;
         let res;
         stubPassportStub('beta@example.com');
-        // attempt to get salt for an account that has no tokens.
+        // attempt to get hash parameters for an account that has no tokens.
         try {
           res = await httpClient.get(
-            `${baseURL}/${type}/salt?email=beta@example.com`, {
+            `${baseURL}/${type}/hash-parameters?email=beta@example.com`, {
               agent
             });
         } catch(e) {
@@ -301,8 +299,8 @@ describe('api', () => {
       result.tokens.length.should.equal(1);
       result.tokens[0].should.be.an('object');
       result.tokens[0].should.have.keys([
-        'authenticationMethod', 'requiredAuthenticationMethods', 'id', 'salt',
-        'sha256', 'expires'
+        'authenticationMethod', 'requiredAuthenticationMethods', 'id',
+        'hashParameters', 'sha256', 'expires'
       ]);
       // delete the nonce for the account
       let res2;
@@ -433,8 +431,9 @@ describe('api', () => {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
       const password = 'test-password';
-      const saltRounds = 10;
-      const hash = await bcrypt.hash(password, saltRounds);
+      const {hash} = await brAuthnToken._pbkdf2.pbkdf2({
+        secret: password
+      });
       stubPassportStub('alpha@example.com');
       let err;
       let res;
@@ -629,8 +628,9 @@ describe('api', () => {
         const email = 'alpha@example.com';
         const type = 'password';
         const password = 'some-password';
-        const saltRounds = 10;
-        const hash = await bcrypt.hash(password, saltRounds);
+        const {hash} = await brAuthnToken._pbkdf2.pbkdf2({
+          secret: password
+        });
 
         // disable authentication to allow password to be set
         stubPassportStub(email);
