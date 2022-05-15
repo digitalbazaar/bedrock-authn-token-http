@@ -1,5 +1,24 @@
 # bedrock-authn-token-http ChangeLog
 
+## 7.0.0 - 2022-05-xx
+
+### Added
+- Add `/authn/tokens/<token-type>/hash-parameters` route that reports all hash
+  parameters for a `nonce` or `password`. This route replaces
+  `/authn/tokens/<token-type>/salt` that only reported the `salt`.
+
+### Changed
+- **BREAKING**: Update peer deps:
+  - `@bedrock/authn-token@10`.
+- **BREAKING**: The new `@bedrock/authn-token` version no longer supports
+  generating bcrypt-based nonces, only pbkdf2 is supported because it has
+  native client support. Existing bcrypt-based passwords and nonces can
+  still be verified.
+
+### Removed
+- **BREAKING**: Removed `/authn/tokens/<token-type>/salt` route.
+  Use `/authn/tokens/<token-type>/hash-parameters` instead.
+
 ## 6.0.0 - 2022-04-29
 
 ### Changed
