@@ -12,7 +12,7 @@
   "dependencies": {
     "@bedrock/account": "^8.0.0",
     "@bedrock/account-http": "^6.0.0",
-    "@bedrock/authn-token": "digitalbazaar/bedrock-authn-token#remove-bcrypt",
+    "@bedrock/authn-token": "^10.0.0",
     "@bedrock/authn-token-http": "file:..",
     "@bedrock/core": "^6.0.0",
     "@bedrock/express": "^8.0.0",

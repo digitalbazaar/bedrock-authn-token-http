@@ -12,8 +12,8 @@
   - `@bedrock/authn-token@10`.
 - **BREAKING**: The new `@bedrock/authn-token` version no longer supports
   generating bcrypt-based nonces, only pbkdf2 is supported because it has
-  native client support. Existing bcrypt-based passwords and nonces can
-  still be verified.
+  native client support. Existing bcrypt-based passwords can still be verified
+  but should be eventually replaced by pbkdf2 passwords.
 - **BREAKING**: Improve email validation.
 
 ### Removed
