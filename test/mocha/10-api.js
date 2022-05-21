@@ -165,6 +165,29 @@ describe('api', () => {
         res.status.should.equal(204);
         should.not.exist(res.data);
       });
+    it('should fail to create `nonce` with uppercase email',
+      async function() {
+        const type = 'nonce';
+        let err;
+        let res;
+        // posting a body without an accountId
+        try {
+          res = await httpClient.post(`${baseURL}/${type}`, {
+            agent, json: {
+              email: 'ALPHA@example.com',
+              requiredAuthenticationMethods: ['login-email-challenge'],
+              authenticationMethod: 'login-email-challenge'
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        should.exist(err);
+        should.not.exist(res);
+        err.name.should.equal('HTTPError');
+        err.message.should.equal(
+          `A validation error occured in the 'postToken' validator.`);
+      });
     it('should create "password"', async function() {
       const type = 'password';
       const accountId = accounts['alpha@example.com'].account.id;
@@ -229,6 +252,34 @@ describe('api', () => {
       should.exist(res.data);
       res.data.should.be.an('object');
       res.data.should.have.keys(['hashParameters']);
+    });
+    it('should fail validation when getting hash parameters', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      stubPassportStub('alpha@example.com');
+      // set a nonce for the account
+      await httpClient.post(`${baseURL}/${type}`, {
+        agent, json: {
+          // fail validation with uppercase email
+          email: 'alpha@example.com',
+          requiredAuthenticationMethods: ['login-email-challenge'],
+          authenticationMethod: 'login-email-challenge'
+        }
+      });
+      // get the hash parameters for the nonce token
+      try {
+        res = await httpClient.get(
+          `${baseURL}/${type}/hash-parameters?email=Alpha@example.com`, {
+            agent
+          });
+      } catch(e) {
+        err = e;
+      }
+      should.exist(err);
+      should.not.exist(res);
+      err.message.should.equal(
+        `A validation error occured in the 'getTokensQuery' validator.`);
     });
     it('should throw error if there is no token for the account or email',
       async function() {
