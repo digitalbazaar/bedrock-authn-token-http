@@ -23,7 +23,7 @@
     "@bedrock/session-mongodb": "^6.0.0",
     "@bedrock/test": "^8.0.0",
     "@bedrock/validation": "^7.0.0",
-    "@digitalbazaar/http-client": "^3.0.0",
+    "@digitalbazaar/http-client": "^3.2.0",
     "bnid": "^3.0.0",
     "c8": "^7.11.0",
     "cross-env": "^7.0.2",

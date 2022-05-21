@@ -14,6 +14,7 @@
   generating bcrypt-based nonces, only pbkdf2 is supported because it has
   native client support. Existing bcrypt-based passwords and nonces can
   still be verified.
+- **BREAKING**: Improve email validation.
 
 ### Removed
 - **BREAKING**: Removed `/authn/tokens/<token-type>/salt` route.

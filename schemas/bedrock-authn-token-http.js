@@ -1,171 +1,171 @@
 /*!
  * Copyright (c) 2022 Digital Bazaar, Inc. All rights reserved.
  */
-const postToken = {
-  title: 'postToken',
-  type: 'object',
-  additionalProperties: false,
-  anyOf: [
-    {required: ['email']},
-    {required: ['account']}
-  ],
-  properties: {
-    email: {
-      type: 'string'
-    },
-    account: {
-      type: 'string'
-    },
-    hash: {
-      type: 'string'
-    },
-    authenticationMethod: {
-      type: 'string'
-    },
-    requiredAuthenticationMethods: {
-      type: 'array',
-      items: {
+import {schemas} from '@bedrock/validation';
+
+export function postToken() {
+  return {
+    title: 'postToken',
+    type: 'object',
+    additionalProperties: false,
+    anyOf: [
+      {required: ['email']},
+      {required: ['account']}
+    ],
+    properties: {
+      email: schemas.email(),
+      account: {
+        type: 'string'
+      },
+      hash: {
+        type: 'string'
+      },
+      authenticationMethod: {
+        type: 'string'
+      },
+      requiredAuthenticationMethods: {
+        type: 'array',
+        items: {
+          type: 'string'
+        }
+      },
+      serviceId: {
+        type: 'string'
+      },
+      typeOptions: {
+        type: 'object',
+        properties: {
+          entryStyle: {
+            type: 'string'
+          }
+        }
+      }
+    }
+  };
+}
+
+export function getTokensQuery() {
+  return {
+    title: 'getTokensQuery',
+    type: 'object',
+    additionalProperties: false,
+    required: ['email'],
+    properties: {
+      email: schemas.email()
+    }
+  };
+}
+
+export function postAuthenticate() {
+  return {
+    title: 'postAuthenticate',
+    type: 'object',
+    additionalProperties: false,
+    required: ['type'],
+    anyOf: [
+      {required: ['email', 'hash']},
+      {required: ['account', 'hash']},
+      {required: ['email', 'challenge']},
+      {required: ['account', 'challenge']}
+    ],
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['password', 'nonce', 'totp', 'multifactor']
+      },
+      email: schemas.email(),
+      account: {
+        type: 'string'
+      },
+      hash: {
+        type: 'string'
+      },
+      challenge: {
         type: 'string'
       }
-    },
-    serviceId: {
-      type: 'string'
-    },
-    typeOptions: {
-      type: 'object',
-      properties: {
-        entryStyle: {
+    }
+  };
+}
+
+export function postLogin() {
+  return {
+    title: 'postLogin',
+    type: 'object',
+    additionalProperties: false,
+    required: ['type'],
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['password', 'nonce', 'totp', 'multifactor']
+      },
+      email: schemas.email(),
+      account: {
+        type: 'string'
+      },
+      hash: {
+        type: 'string'
+      }
+    }
+  };
+}
+
+export function postRequirements() {
+  return {
+    title: 'postRequirements',
+    type: 'object',
+    additionalProperties: false,
+    required: ['account', 'requiredAuthenticationMethods'],
+    properties: {
+      account: {
+        type: 'string'
+      },
+      requiredAuthenticationMethods: {
+        type: 'array',
+        items: {
           type: 'string'
         }
       }
     }
-  }
-};
+  };
+}
 
-const getTokensQuery = {
-  title: 'getTokensQuery',
-  type: 'object',
-  additionalProperties: false,
-  required: ['email'],
-  properties: {
-    email: {
-      type: 'string'
-    }
-  }
-};
-
-const postAuthenticate = {
-  title: 'postAuthenticate',
-  type: 'object',
-  additionalProperties: false,
-  required: ['type'],
-  anyOf: [
-    {required: ['email', 'hash']},
-    {required: ['account', 'hash']},
-    {required: ['email', 'challenge']},
-    {required: ['account', 'challenge']}
-  ],
-  properties: {
-    type: {
-      type: 'string',
-      enum: ['password', 'nonce', 'totp', 'multifactor']
-    },
-    email: {
-      type: 'string'
-    },
-    account: {
-      type: 'string'
-    },
-    hash: {
-      type: 'string'
-    },
-    challenge: {
-      type: 'string'
-    }
-  }
-};
-
-const postLogin = {
-  title: 'postLogin',
-  type: 'object',
-  additionalProperties: false,
-  required: ['type'],
-  properties: {
-    type: {
-      type: 'string',
-      enum: ['password', 'nonce', 'totp', 'multifactor']
-    },
-    email: {
-      type: 'string'
-    },
-    account: {
-      type: 'string'
-    },
-    hash: {
-      type: 'string'
-    }
-  }
-};
-
-const postRequirements = {
-  title: 'postRequirements',
-  type: 'object',
-  additionalProperties: false,
-  required: ['account', 'requiredAuthenticationMethods'],
-  properties: {
-    account: {
-      type: 'string'
-    },
-    requiredAuthenticationMethods: {
-      type: 'array',
-      items: {
+export function getAuthenticationRequirements() {
+  return {
+    title: 'getAuthenticationRequirements',
+    type: 'object',
+    additionalProperties: false,
+    required: ['account'],
+    properties: {
+      account: {
         type: 'string'
       }
     }
-  }
-};
+  };
+}
 
-const getAuthenticationRequirements = {
-  title: 'getAuthenticationRequirements',
-  type: 'object',
-  additionalProperties: false,
-  required: ['account'],
-  properties: {
-    account: {
-      type: 'string'
+export function getClientRegistrationQuery() {
+  return {
+    title: 'getClientRegistrationQuery',
+    type: 'object',
+    additionalProperties: false,
+    required: ['email'],
+    properties: {
+      email: schemas.email()
     }
-  }
-};
+  };
+}
 
-const getClientRegistrationQuery = {
-  title: 'getClientRegistrationQuery',
-  type: 'object',
-  additionalProperties: false,
-  required: ['email'],
-  properties: {
-    email: {
-      type: 'string'
+export function postRecovery() {
+  return {
+    title: 'postRecovery',
+    type: 'object',
+    additionalProperties: false,
+    required: ['account', 'recoveryEmail'],
+    properties: {
+      account: {
+        type: 'string'
+      },
+      recoveryEmail: schemas.email()
     }
-  }
-};
-
-const postRecovery = {
-  title: 'postRecovery',
-  type: 'object',
-  additionalProperties: false,
-  required: ['account', 'recoveryEmail'],
-  properties: {
-    account: {
-      type: 'string'
-    },
-    recoveryEmail: {
-      type: 'string'
-    }
-  }
-};
-
-export {
-  postToken, getTokensQuery, postAuthenticate, postLogin,
-  postRequirements, getAuthenticationRequirements, getClientRegistrationQuery,
-  postRecovery
-};
+  };
+}
