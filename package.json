@@ -29,11 +29,11 @@
     "passport-strategy": "^1.0.0"
   },
   "peerDependencies": {
-    "@bedrock/account": "^8.0.0",
-    "@bedrock/authn-token": "^10.0.0",
+    "@bedrock/account": "^9.0.0",
+    "@bedrock/authn-token": "^11.0.0",
     "@bedrock/core": "^6.0.0",
     "@bedrock/express": "^8.0.0",
-    "@bedrock/passport": "^10.0.0",
+    "@bedrock/passport": "^11.0.0",
     "@bedrock/validation": "^7.0.0"
   },
   "devDependencies": {

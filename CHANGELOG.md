@@ -1,5 +1,10 @@
 # bedrock-authn-token-http ChangeLog
 
+## 8.0.0 -
+
+### Changed
+- **BREAKING**: Updated peer deps to work with node mongo driver 4.
+
 ## 7.0.2 - 2022-05-26
 
 ### Fixed
