@@ -1,5 +1,15 @@
 # bedrock-authn-token-http ChangeLog
 
+## 8.0.0 - 2023-01-dd
+
+### Changed
+- **BREAKING**: Update peer deps:
+  - `@bedrock/account@9`
+  - `@bedrock/authn-token@10`
+  - `@bedrock/passport@11`.
+  - This changes include database layout and record format changes that are
+    incompatible with previous releases.
+
 ## 7.0.2 - 2022-05-26
 
 ### Fixed
