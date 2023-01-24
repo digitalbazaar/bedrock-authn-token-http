@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@bedrock/account": "^9.0.0",
-    "@bedrock/account-http": "^7.0.0",
+    "@bedrock/account-http": "^7.0.1",
     "@bedrock/authn-token": "^11.0.0",
     "@bedrock/authn-token-http": "file:..",
     "@bedrock/core": "^6.0.0",
@@ -30,7 +30,7 @@
     "otplib": "^12.0.1",
     "set-cookie-parser": "^2.4.6",
     "sinon": "^9.0.2",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "c8": {
     "excludeNodeModules": false,
