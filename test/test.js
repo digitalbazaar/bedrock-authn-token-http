@@ -1,8 +1,8 @@
 /*!
- * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2023 Digital Bazaar, Inc. All rights reserved.
  */
-import sinon from 'sinon';
 import {passport} from '@bedrock/passport';
+import sinon from 'sinon';
 const original = passport.authenticate;
 global.passportStub = sinon.stub(passport, 'authenticate');
 global.passportStub._original = original;

@@ -1,15 +1,15 @@
 /*!
- * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2023 Digital Bazaar, Inc. All rights reserved.
  */
 import * as brAuthnToken from '@bedrock/authn-token';
 import * as helpers from './helpers.js';
-import {authenticator} from 'otplib';
+import {_deserializeUser, passport} from '@bedrock/passport';
 import {agent} from '@bedrock/https-agent';
+import {authenticator} from 'otplib';
 import {config} from '@bedrock/core';
 import {generateId} from 'bnid';
 import {httpClient} from '@digitalbazaar/http-client';
 import {mockData} from './mock.data.js';
-import {passport, _deserializeUser} from '@bedrock/passport';
 import setCookie from 'set-cookie-parser';
 
 let accounts;
