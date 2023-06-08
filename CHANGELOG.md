@@ -1,5 +1,11 @@
 # bedrock-authn-token-http ChangeLog
 
+## 8.1.0 - 2023-06-08
+
+### Fixed
+- Uniform HTTP errors with invalid username hitting `/hash-parameters`.
+  Return fake hash parameters in case of invalid username.
+
 ## 8.0.0 - 2023-01-24
 
 ### Changed
