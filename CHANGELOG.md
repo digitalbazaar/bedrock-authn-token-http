@@ -1,10 +1,14 @@
 # bedrock-authn-token-http ChangeLog
 
-## 8.1.0 - 2023-06-08
+## 8.1.0 - 2023-06-xx
 
 ### Fixed
-- Uniform HTTP errors with invalid username hitting `/hash-parameters`.
-  Return fake hash parameters in case of invalid username.
+- Return uniform errors from `/authn/tokens/<token-type>/hash-parameters`.
+- Return fake hash parameters in case of invalid account information.
+
+### Added
+- Introduce `hmacKey` in options to be used when generating fake tokens.
+- Introduce `jitter` in options to obfuscate timing.
 
 ## 8.0.0 - 2023-01-24
 
