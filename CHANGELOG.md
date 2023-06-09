@@ -2,13 +2,14 @@
 
 ## 8.1.0 - 2023-06-xx
 
+### Added
+- FIXME: rename `hmacKey` before publication.
+- Introduce `hmacKey` in options to be used when generating fake tokens.
+- Introduce `jitter` in options to obfuscate timing.
+
 ### Fixed
 - Return uniform errors from `/authn/tokens/<token-type>/hash-parameters`.
 - Return fake hash parameters in case of invalid account information.
-
-### Added
-- Introduce `hmacKey` in options to be used when generating fake tokens.
-- Introduce `jitter` in options to obfuscate timing.
 
 ## 8.0.0 - 2023-01-24
 
