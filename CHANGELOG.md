@@ -1,6 +1,6 @@
 # bedrock-authn-token-http ChangeLog
 
-## 8.1.0 - 2023-06-xx
+## 8.1.0 - 2023-06-10
 
 ### Added
 - Add a "fake token" feature to better hide whether any tokens (of type
