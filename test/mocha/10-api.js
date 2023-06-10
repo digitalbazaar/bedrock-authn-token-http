@@ -281,25 +281,30 @@ describe('api', () => {
       err.message.should.equal(
         `A validation error occured in the 'getTokensQuery' validator.`);
     });
-    it('should throw error if there is no token for the account or email',
+    it('should return a fake token when there is no token for account / email',
       async function() {
         const type = 'nonce';
         let err;
         let res;
-        stubPassportStub('beta@example.com');
+        const email = 'beta@example.com';
+        stubPassportStub(email);
         // attempt to get hash parameters for an account that has no tokens.
         try {
           res = await httpClient.get(
-            `${baseURL}/${type}/hash-parameters?email=beta@example.com`, {
+            `${baseURL}/${type}/hash-parameters?email=${email}`, {
               agent
             });
         } catch(e) {
           err = e;
         }
-        should.exist(err);
-        should.not.exist(res);
-        err.message.should.equal('Authentication token not found.');
-        err.status.should.equal(404);
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(200);
+        should.exist(res.data);
+        res.data.should.be.an('object');
+        res.data.should.have.keys(['hashParameters']);
+        const fakeToken = await helpers.createFakeToken({email});
+        res.data.hashParameters.should.deep.equal(fakeToken.hashParameters);
       });
   });
   describe('delete /', () => {
