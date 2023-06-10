@@ -1,6 +1,6 @@
 # bedrock-authn-token-http ChangeLog
 
-## 8.1.1 - 2023-06-dd
+## 8.1.1 - 2023-06-10
 
 ### Fixed
 - Fix "fake token" salt length.
