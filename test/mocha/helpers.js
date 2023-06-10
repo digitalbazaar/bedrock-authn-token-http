@@ -9,8 +9,8 @@ import crypto from 'node:crypto';
 export async function createFakeToken({accountId, email} = {}) {
   const {'authn-token-http': cfg} = config;
   const salt = crypto.createHmac('sha256', cfg.fakeTokenOptions.hmacSecret)
-    .update(accountId ?? email).digest('base64')
-    .slice(0, 16);
+    .update(accountId ?? email).digest()
+    .toString('base64', 0, 16).split('=', 1)[0];
   const fakeToken = {
     hashParameters: {
       id: 'pbkdf2-sha512',
