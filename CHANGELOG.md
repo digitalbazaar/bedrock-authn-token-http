@@ -3,8 +3,7 @@
 ## 8.1.0 - 2023-06-xx
 
 ### Added
-- FIXME: rename `hmacKey` before publication.
-- Introduce `hmacKey` in options to be used when generating fake tokens.
+- Introduce `hmacSecret` in options to be used when generating fake tokens.
 - Introduce `jitter` in options to obfuscate timing.
 
 ### Fixed
