@@ -18,7 +18,8 @@
 
 ### Fixed
 - Return uniform errors from `/authn/tokens/<token-type>/hash-parameters`.
-- Return fake hash parameters in case of invalid account information.
+- Return fake hash parameters in case of invalid account information or
+  no tokens (of `nonce` or `password` type) for an account.
 
 ## 8.0.0 - 2023-01-24
 
