@@ -3,6 +3,24 @@
  */
 import * as brAccount from '@bedrock/account';
 import * as database from '@bedrock/mongodb';
+import {config} from '@bedrock/core';
+import crypto from 'node:crypto';
+
+export async function createFakeToken({accountId, email} = {}) {
+  const {'authn-token-http': cfg} = config;
+  const key = cfg.fakeTokenOptions.hmacKey;
+  const salt = crypto.createHmac('sha256', key)
+    .update(accountId ?? email).digest();
+  const b64Salt = salt.toString('base64', 0, 16);
+  const fakeToken = {
+    hashParameters: {
+      id: 'pbkdf2-sha512',
+      params: {i: 100000},
+      salt: b64Salt
+    }
+  };
+  return fakeToken;
+}
 
 export async function prepareDatabase(mockData) {
   await removeCollections();
