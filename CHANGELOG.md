@@ -3,18 +3,22 @@
 ## 8.1.0 - 2023-06-xx
 
 ### Added
-- Introduce the `fakeTokenOptions.hmacSecret` config option to be used when
+- Add a "fake token" feature to better hide whether any tokens (of type
+  `nonce` or `password`) are associated with a given email address or account.
+  This information could otherwise be leaked when a request from the public
+  internet is made for the token hash parameters.
+- Add the `fakeTokenOptions.hmacSecret` config option to be used when
   generating fake tokens. Fake tokens are generated in an effort to hide
-  whether an email has been registered with a system. This occurs when a
-  request from the public internet is made for the token hash parameters
-  associated with an account. This config value must be set to a secret in
+  whether any tokens (of type `nonce` or `password`) are associated with a
+  given email address or account. This config value must be set to a secret in
   deployments to get any benefit from this feature. Existing deployments that
   did not previously have the feature may safely upgrade, even without changing
   the default value or doing so with incremental updates. No significant hiding
   will be in effect on such deployments until the default value is uniformly
   changed to a secret value.
-- Introduce the `fakeTokenOptions.jitter` config option to reduce timing
-  differences when generating fake tokens to hide email registrations.
+- Add the `fakeTokenOptions.jitter` config option to reduce timing differences
+  between finding zero or more real tokens during the fake token generation
+  process.
 
 ### Fixed
 - Return uniform errors from `/authn/tokens/<token-type>/hash-parameters`.
