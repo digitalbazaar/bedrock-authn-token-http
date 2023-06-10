@@ -1,6 +1,6 @@
 {
   "name": "@bedrock/authn-token-http",
-  "version": "8.1.1",
+  "version": "8.1.2-0",
   "type": "module",
   "description": "HTTP API for bedrock-authn-token",
   "main": "./lib/index.js",
