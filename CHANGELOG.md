@@ -16,6 +16,9 @@
 - Update dev dependencies.
 - Update test dependencies.
 
+### Fixed
+- Fix test error text checks.
+
 ## 8.1.1 - 2023-06-10
 
 ### Fixed

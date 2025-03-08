@@ -186,7 +186,7 @@ describe('api', () => {
         should.not.exist(res);
         err.name.should.equal('HTTPError');
         err.message.should.equal(
-          `A validation error occured in the 'postToken' validator.`);
+          `A validation error occurred in the 'postToken' validator.`);
       });
     it('should create "password"', async function() {
       const type = 'password';
@@ -279,7 +279,7 @@ describe('api', () => {
       should.exist(err);
       should.not.exist(res);
       err.message.should.equal(
-        `A validation error occured in the 'getTokensQuery' validator.`);
+        `A validation error occurred in the 'getTokensQuery' validator.`);
     });
     it('should return a fake token when there is no token for account / email',
       async function() {
