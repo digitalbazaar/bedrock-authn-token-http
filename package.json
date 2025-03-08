@@ -37,10 +37,10 @@
     "@bedrock/validation": "^7.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
+    "eslint": "^8.57.1",
     "eslint-config-digitalbazaar": "^5.0.1",
     "eslint-plugin-jsdoc": "^46.2.6",
-    "jsdoc-to-markdown": "^8.0.0"
+    "eslint-plugin-unicorn": "^56.0.1"
   },
   "directories": {
     "lib": "./lib"
