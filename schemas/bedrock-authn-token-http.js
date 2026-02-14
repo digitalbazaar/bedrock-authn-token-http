@@ -26,7 +26,10 @@ export function postToken() {
       requiredAuthenticationMethods: {
         type: 'array',
         items: {
-          type: 'string'
+          oneOf: [
+            {type: 'string'},
+            {type: 'array', items: {type: 'string'}}
+          ]
         }
       },
       serviceId: {
@@ -122,7 +125,10 @@ export function postRequirements() {
       requiredAuthenticationMethods: {
         type: 'array',
         items: {
-          type: 'string'
+          oneOf: [
+            {type: 'string'},
+            {type: 'array', items: {type: 'string'}}
+          ]
         }
       }
     }

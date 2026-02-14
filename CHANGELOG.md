@@ -1,5 +1,10 @@
 # bedrock-authn-token-http ChangeLog
 
+## 9.1.0 - 2026-02-dd
+
+### Added
+- Allow OR syntax for both `postToken` and `postRequirements`.
+
 ## 9.0.0 - 2025-03-07
 
 ### Changed
