@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2023 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2026 Digital Bazaar, Inc.
  */
 import * as brAuthnToken from '@bedrock/authn-token';
 import * as helpers from './helpers.js';
@@ -58,11 +58,11 @@ const baseURL = `https://${config.server.host}` +
 const authenticateURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.authenticate}`;
 const registrationURL = `https://${config.server.host}` +
-`${config['authn-token-http'].routes.registration}`;
+  `${config['authn-token-http'].routes.registration}`;
 const loginURL = `https://${config.server.host}` +
-`${config['authn-token-http'].routes.login}`;
+  `${config['authn-token-http'].routes.login}`;
 const requirementsURL = `https://${config.server.host}` +
-`${config['authn-token-http'].routes.requirements}`;
+  `${config['authn-token-http'].routes.requirements}`;
 
 describe('api', () => {
   describe('post /', () => {
