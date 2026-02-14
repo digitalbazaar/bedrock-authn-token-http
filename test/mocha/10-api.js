@@ -61,6 +61,8 @@ const registrationURL = `https://${config.server.host}` +
 `${config['authn-token-http'].routes.registration}`;
 const loginURL = `https://${config.server.host}` +
 `${config['authn-token-http'].routes.login}`;
+const requirementsURL = `https://${config.server.host}` +
+`${config['authn-token-http'].routes.requirements}`;
 
 describe('api', () => {
   describe('post /', () => {
@@ -187,6 +189,30 @@ describe('api', () => {
         err.name.should.equal('HTTPError');
         err.message.should.equal(
           `A validation error occurred in the 'postToken' validator.`);
+      });
+    it('should create a `nonce` with nested requiredAuthenticationMethods',
+      async function() {
+        const type = 'nonce';
+        let err;
+        let res;
+        try {
+          res = await httpClient.post(`${baseURL}/${type}`, {
+            agent, json: {
+              email: 'alpha@example.com',
+              requiredAuthenticationMethods: [
+                'login-email-challenge',
+                ['totp-challenge', 'nonce-challenge']
+              ],
+              authenticationMethod: 'login-email-challenge'
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
+        should.not.exist(res.data);
       });
     it('should create "password"', async function() {
       const type = 'password';
@@ -831,6 +857,78 @@ describe('api', () => {
         err.name.should.equal('HTTPError');
         err.status.should.equal(400);
         err.message.should.equal('Not authenticated.');
+      });
+  });
+  describe('post /requirements', () => {
+    before(async function setup() {
+      await helpers.prepareDatabase(mockData);
+      accounts = mockData.accounts;
+    });
+    afterEach(async function() {
+      stubPassportStub(null);
+    });
+    it('should set requirements with nested arrays for OR logic',
+      async function() {
+        const accountId = accounts['alpha@example.com'].account.id;
+        stubPassportStub('alpha@example.com');
+        let err;
+        let res;
+        try {
+          res = await httpClient.post(`${requirementsURL}`, {
+            agent, json: {
+              account: accountId,
+              requiredAuthenticationMethods: [
+                'login-email-challenge',
+                ['totp-challenge', 'nonce-challenge']
+              ]
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
+
+        // verify the requirements were persisted
+        let res2;
+        let err2;
+        try {
+          res2 = await httpClient.get(
+            `${requirementsURL}?account=${accountId}`, {agent});
+        } catch(e) {
+          err2 = e;
+        }
+        assertNoError(err2);
+        should.exist(res2);
+        res2.data.should.be.an('object');
+        res2.data.requiredAuthenticationMethods.should.deep.equal([
+          'login-email-challenge',
+          ['totp-challenge', 'nonce-challenge']
+        ]);
+      });
+    it('should set requirements with string-only array',
+      async function() {
+        const accountId = accounts['alpha@example.com'].account.id;
+        stubPassportStub('alpha@example.com');
+        let err;
+        let res;
+        try {
+          res = await httpClient.post(`${requirementsURL}`, {
+            agent, json: {
+              account: accountId,
+              requiredAuthenticationMethods: [
+                'login-email-challenge',
+                'totp-challenge'
+              ]
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
       });
   });
 });
