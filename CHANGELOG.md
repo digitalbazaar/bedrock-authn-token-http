@@ -1,5 +1,17 @@
 # bedrock-authn-token-http ChangeLog
 
+## 9.2.0 - 2026-07-dd
+
+### Added
+- Derive an optional `requestOrigin` from the request's `Origin` header
+  (falling back to the `Referer` header's origin) and pass it to
+  `brAuthnToken.set()` and `brAuthnToken.setRecoveryEmail()`, causing it to
+  be included in the `bedrock-authn-token.notify` and
+  `bedrock-authn-token.recoveryEmail.change` events.
+
+### Changed
+- Update `@bedrock/authn-token` peer dependency to `^12.1.0`.
+
 ## 9.1.0 - 2026-02-14
 
 ### Added
