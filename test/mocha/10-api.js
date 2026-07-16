@@ -1,6 +1,7 @@
 /*!
  * Copyright (c) 2019-2026 Digital Bazaar, Inc.
  */
+import * as bedrock from '@bedrock/core';
 import * as brAuthnToken from '@bedrock/authn-token';
 import * as helpers from './helpers.js';
 import {_deserializeUser, passport} from '@bedrock/passport';
@@ -63,6 +64,8 @@ const loginURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.login}`;
 const requirementsURL = `https://${config.server.host}` +
   `${config['authn-token-http'].routes.requirements}`;
+const recoveryURL = `https://${config.server.host}` +
+  `${config['authn-token-http'].routes.recovery}`;
 
 describe('api', () => {
   describe('post /', () => {
@@ -95,6 +98,130 @@ describe('api', () => {
       res.status.should.equal(204);
       should.not.exist(res.data);
     });
+    it('should include "requestOrigin" in the notify event when an ' +
+      '"Origin" header is present', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      // the `requestOrigin` tests use `beta` to avoid exhausting `alpha`'s
+      // budget under the 5-pending-nonce-per-account limit
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
+          }, headers: {
+            origin: 'https://wallet.example'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      events[0].requestOrigin.should.equal('https://wallet.example');
+    });
+    it('should derive "requestOrigin" from the "Referer" header when no ' +
+      '"Origin" header is present', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
+          }, headers: {
+            referer: 'https://wallet.example/some/page?q=1'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      events[0].requestOrigin.should.equal('https://wallet.example');
+    });
+    it('should not include "requestOrigin" in the notify event when no ' +
+      '"Origin" or "Referer" header is present', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      should.not.exist(events[0].requestOrigin);
+    });
+    it('should include "requestOrigin" in the recoveryEmail.change event',
+      async function() {
+        let err;
+        let res;
+        const accountId = accounts['alpha@example.com'].account.id;
+        stubPassportStub('alpha@example.com');
+        const events = [];
+        const listener = event => events.push(event);
+        bedrock.events.on('bedrock-authn-token.recoveryEmail.change', listener);
+        try {
+          res = await httpClient.post(recoveryURL, {
+            agent, json: {
+              account: accountId,
+              recoveryEmail: 'alpha-recovery@example.com'
+            }, headers: {
+              origin: 'https://wallet.example'
+            }
+          });
+        } catch(e) {
+          err = e;
+        } finally {
+          bedrock.events.removeListener(
+            'bedrock-authn-token.recoveryEmail.change', listener);
+        }
+        assertNoError(err);
+        should.exist(res);
+        res.status.should.equal(204);
+        events.length.should.equal(1);
+        events[0].requestOrigin.should.equal('https://wallet.example');
+        events[0].newRecoveryEmail.should.equal('alpha-recovery@example.com');
+      });
     it('should create a `totp` token', async function() {
       const type = 'totp';
       let err;
