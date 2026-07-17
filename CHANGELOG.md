@@ -8,6 +8,10 @@
   `brAuthnToken.set()` and `brAuthnToken.setRecoveryEmail()`, causing it to
   be included in the `bedrock-authn-token.notify` and
   `bedrock-authn-token.recoveryEmail.change` events.
+- Add a mandatory `requestOriginAllowList` config option
+  (`config['authn-token-http'].requestOriginAllowList`) that gates which
+  derived origins are honored; unlisted origins are treated as absent.
+  Defaults to a computed value admitting the server's own origin.
 
 ### Changed
 - Update `@bedrock/authn-token` peer dependency to `^12.1.0`.
