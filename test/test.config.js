@@ -1,13 +1,14 @@
 /*!
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
-import {config} from '@bedrock/core';
+import {config, util} from '@bedrock/core';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import '@bedrock/account-http';
 import '@bedrock/https-agent';
 import '@bedrock/mongodb';
 
+const cc = util.config.main.computer();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 config.mocha.tests.push(path.join(__dirname, 'mocha'));
@@ -26,3 +27,9 @@ config['https-agent'].rejectUnauthorized = false;
 config['account-http'].autoLoginNewAccounts = true;
 
 config.express.useSession = true;
+
+// admit the test suite's wallet origin in addition to whatever this test
+// server's own computed origin happens to be
+cc('authn-token-http.requestOriginAllowList', () => {
+  return [config.server.baseUri, 'https://wallet.example'];
+});
