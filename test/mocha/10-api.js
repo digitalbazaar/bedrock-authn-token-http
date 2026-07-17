@@ -13,6 +13,8 @@ import {httpClient} from '@digitalbazaar/http-client';
 import {mockData} from './mock.data.js';
 import setCookie from 'set-cookie-parser';
 
+const serverOrigin = config.server.baseUri;
+
 let accounts;
 
 const passportStubSettings = {email: null};
@@ -190,6 +192,68 @@ describe('api', () => {
       res.status.should.equal(204);
       events.length.should.equal(1);
       should.not.exist(events[0].requestOrigin);
+    });
+    it('should not include "requestOrigin" in the notify event when ' +
+      'origin header is not in requestOriginAllowList', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge',
+          }, headers: {
+            origin: 'https://evil.example'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      should.not.exist(events[0].requestOrigin);
+    });
+    it('should derive "requestOrigin" in the notify event when baseUri ' +
+      'is included in requestOriginAllowList', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge',
+          }, headers: {
+            origin: serverOrigin
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      events[0].requestOrigin.should.equal(serverOrigin);
     });
     it('should include "requestOrigin" in the recoveryEmail.change event',
       async function() {
