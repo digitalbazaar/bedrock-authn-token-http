@@ -100,13 +100,13 @@ describe('api', () => {
       res.status.should.equal(204);
       should.not.exist(res.data);
     });
-    it('should include "requestOrigin" in the notify event when an ' +
+    it('should include "authenticationOrigin" in the notify event when an ' +
       '"Origin" header is present', async function() {
       const type = 'nonce';
       let err;
       let res;
-      // the `requestOrigin` tests use `beta` to avoid exhausting `alpha`'s
-      // budget under the 5-pending-nonce-per-account limit
+      // the `authenticationOrigin` tests use `beta` to avoid exhausting
+      // `alpha`'s budget under the 5-pending-nonce-per-account limit
       const accountId = accounts['beta@example.com'].account.id;
       stubPassportStub('beta@example.com');
       const events = [];
@@ -131,10 +131,10 @@ describe('api', () => {
       should.exist(res);
       res.status.should.equal(204);
       events.length.should.equal(1);
-      events[0].requestOrigin.should.equal('https://wallet.example');
+      events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should derive "requestOrigin" from the "Referer" header when no ' +
-      '"Origin" header is present', async function() {
+    it('should derive "authenticationOrigin" from the "Referer" header ' +
+      'when no "Origin" header is present', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -162,10 +162,10 @@ describe('api', () => {
       should.exist(res);
       res.status.should.equal(204);
       events.length.should.equal(1);
-      events[0].requestOrigin.should.equal('https://wallet.example');
+      events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should not include "requestOrigin" in the notify event when no ' +
-      '"Origin" or "Referer" header is present', async function() {
+    it('should not include "authenticationOrigin" in the notify event ' +
+      'when no "Origin" or "Referer" header is present', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -191,10 +191,10 @@ describe('api', () => {
       should.exist(res);
       res.status.should.equal(204);
       events.length.should.equal(1);
-      should.not.exist(events[0].requestOrigin);
+      should.not.exist(events[0].authenticationOrigin);
     });
-    it('should not include "requestOrigin" in the notify event when ' +
-      'origin header is not in requestOriginAllowList', async function() {
+    it('should not include "authenticationOrigin" in the notify event when ' +
+      'origin is not in authenticationOriginAllowList', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -222,10 +222,10 @@ describe('api', () => {
       should.exist(res);
       res.status.should.equal(204);
       events.length.should.equal(1);
-      should.not.exist(events[0].requestOrigin);
+      should.not.exist(events[0].authenticationOrigin);
     });
-    it('should derive "requestOrigin" in the notify event when baseUri ' +
-      'is included in requestOriginAllowList', async function() {
+    it('should derive "authenticationOrigin" in the notify event when ' +
+      'baseUri is included in authenticationOriginAllowList', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -253,9 +253,9 @@ describe('api', () => {
       should.exist(res);
       res.status.should.equal(204);
       events.length.should.equal(1);
-      events[0].requestOrigin.should.equal(serverOrigin);
+      events[0].authenticationOrigin.should.equal(serverOrigin);
     });
-    it('should include "requestOrigin" in the recoveryEmail.change event',
+    it('should include "authenticationOrigin" in recoveryEmail.change event',
       async function() {
         let err;
         let res;
@@ -283,7 +283,7 @@ describe('api', () => {
         should.exist(res);
         res.status.should.equal(204);
         events.length.should.equal(1);
-        events[0].requestOrigin.should.equal('https://wallet.example');
+        events[0].authenticationOrigin.should.equal('https://wallet.example');
         events[0].newRecoveryEmail.should.equal('alpha-recovery@example.com');
       });
     it('should create a `totp` token', async function() {

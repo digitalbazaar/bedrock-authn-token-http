@@ -3,13 +3,14 @@
 ## 9.2.0 - 2026-07-dd
 
 ### Added
-- Derive an optional `requestOrigin` from the request's `Origin` header
-  (falling back to the `Referer` header's origin) and pass it to
-  `brAuthnToken.set()` and `brAuthnToken.setRecoveryEmail()`, causing it to
-  be included in the `bedrock-authn-token.notify` and
-  `bedrock-authn-token.recoveryEmail.change` events.
-- Add a mandatory `requestOriginAllowList` config option
-  (`config['authn-token-http'].requestOriginAllowList`) that gates which
+- Derive an optional `authenticationOrigin` (an origin at which the user is
+  authenticating) from the request's `Origin` header (falling back to the
+  `Referer` header's origin) and pass it to `brAuthnToken.set()` and
+  `brAuthnToken.setRecoveryEmail()`, causing it to be included in the
+  `bedrock-authn-token.notify` and `bedrock-authn-token.recoveryEmail.change`
+  events.
+- Add a mandatory `authenticationOriginAllowList` config option
+  (`config['authn-token-http'].authenticationOriginAllowList`) that gates which
   derived origins are honored; unlisted origins are treated as absent.
   Defaults to a computed value admitting the server's own origin.
 

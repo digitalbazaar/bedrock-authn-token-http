@@ -30,6 +30,6 @@ config.express.useSession = true;
 
 // admit the test suite's wallet origin in addition to whatever this test
 // server's own computed origin happens to be
-cc('authn-token-http.requestOriginAllowList', () => {
+cc('authn-token-http.authenticationOriginAllowList', () => {
   return [config.server.baseUri, 'https://wallet.example'];
 });
