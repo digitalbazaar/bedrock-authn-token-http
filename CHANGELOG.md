@@ -11,8 +11,10 @@
   events.
 - Add a mandatory `authenticationOriginAllowList` config option
   (`config['authn-token-http'].authenticationOriginAllowList`) that gates which
-  derived origins are honored; unlisted origins are treated as absent.
-  Defaults to a computed value admitting the server's own origin.
+  derived origins are honored; a request that supplies an origin not on the
+  list is rejected with a `NotAllowedError` (403), while a request with no
+  origin is allowed. Defaults to a computed value admitting the server's own
+  origin.
 
 ### Changed
 - Update `@bedrock/authn-token` peer dependency to `^12.1.0`.

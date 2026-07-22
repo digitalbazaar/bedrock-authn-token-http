@@ -193,8 +193,8 @@ describe('api', () => {
       events.length.should.equal(1);
       should.not.exist(events[0].authenticationOrigin);
     });
-    it('should not include "authenticationOrigin" in the notify event when ' +
-      'origin is not in authenticationOriginAllowList', async function() {
+    it('should reject with a 403 when origin is not in ' +
+      'authenticationOriginAllowList', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -218,11 +218,43 @@ describe('api', () => {
       } finally {
         bedrock.events.removeListener('bedrock-authn-token.notify', listener);
       }
-      assertNoError(err);
-      should.exist(res);
-      res.status.should.equal(204);
-      events.length.should.equal(1);
-      should.not.exist(events[0].authenticationOrigin);
+      should.not.exist(res);
+      should.exist(err);
+      err.name.should.equal('HTTPError');
+      err.status.should.equal(403);
+      events.length.should.equal(0);
+    });
+    it('should reject and emit no event when the origin ' +
+      'is "null"', async function() {
+      // `null` is supplied-but-unlisted, so it is rejected and emits no event.
+      // The status is not asserted: `@bedrock/passport` 500s on `Origin: null`
+      // (bedrock-passport#59) before `_getOrigin` runs.
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge',
+          }, headers: {
+            origin: 'null'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      should.not.exist(res);
+      should.exist(err);
+      events.length.should.equal(0);
     });
     it('should derive "authenticationOrigin" in the notify event when ' +
       'baseUri is included in authenticationOriginAllowList', async function() {
