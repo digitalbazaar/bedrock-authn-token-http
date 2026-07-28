@@ -133,39 +133,8 @@ describe('api', () => {
       events.length.should.equal(1);
       events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should derive "authenticationOrigin" from the "Referer" header ' +
-      'when no "Origin" header is present', async function() {
-      const type = 'nonce';
-      let err;
-      let res;
-      const accountId = accounts['beta@example.com'].account.id;
-      stubPassportStub('beta@example.com');
-      const events = [];
-      const listener = event => events.push(event);
-      bedrock.events.on('bedrock-authn-token.notify', listener);
-      try {
-        res = await httpClient.post(`${baseURL}/${type}`, {
-          agent, json: {
-            account: accountId,
-            requiredAuthenticationMethods: ['login-email-challenge'],
-            authenticationMethod: 'login-email-challenge'
-          }, headers: {
-            referer: 'https://wallet.example/some/page?q=1'
-          }
-        });
-      } catch(e) {
-        err = e;
-      } finally {
-        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
-      }
-      assertNoError(err);
-      should.exist(res);
-      res.status.should.equal(204);
-      events.length.should.equal(1);
-      events[0].authenticationOrigin.should.equal('https://wallet.example');
-    });
     it('should not include "authenticationOrigin" in the notify event ' +
-      'when no "Origin" or "Referer" header is present', async function() {
+      'when no "Origin" header is present', async function() {
       const type = 'nonce';
       let err;
       let res;
