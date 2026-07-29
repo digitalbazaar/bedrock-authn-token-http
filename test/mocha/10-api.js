@@ -100,8 +100,8 @@ describe('api', () => {
       res.status.should.equal(204);
       should.not.exist(res.data);
     });
-    it('should include "authenticationOrigin" in the notify event when an ' +
-      '"Origin" header is present', async function() {
+    it('should include `authenticationOrigin` in the notify event when an ' +
+      '`Origin` header is present', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -133,7 +133,7 @@ describe('api', () => {
       events.length.should.equal(1);
       events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should reject with a 403 when no "Origin" header is present',
+    it('should reject with a 403 when no `Origin` header is present',
       async function() {
         const type = 'nonce';
         let err;
@@ -162,8 +162,8 @@ describe('api', () => {
         err.status.should.equal(403);
         events.length.should.equal(0);
       });
-    it('should reject with a 403 when origin is not in ' +
-      'authenticationOriginAllowList', async function() {
+    it('should reject with a 403 when the `Origin` header is not in ' +
+      '`authenticationOriginAllowList`', async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -193,8 +193,8 @@ describe('api', () => {
       err.status.should.equal(403);
       events.length.should.equal(0);
     });
-    it('should reject and emit no event when the origin ' +
-      'is "null"', async function() {
+    it('should reject and emit no event when the `Origin` header ' +
+      'is `null`', async function() {
       // `null` is supplied-but-unlisted, so it is rejected and emits no event.
       // The status is not asserted: `@bedrock/passport` 500s on `Origin: null`
       // (bedrock-passport#59) before `_getOrigin` runs.
@@ -225,8 +225,9 @@ describe('api', () => {
       should.exist(err);
       events.length.should.equal(0);
     });
-    it('should derive "authenticationOrigin" in the notify event when ' +
-      'baseUri is included in authenticationOriginAllowList', async function() {
+    it('should derive `authenticationOrigin` in the notify event when ' +
+      '`baseUri` is included in `authenticationOriginAllowList`',
+    async function() {
       const type = 'nonce';
       let err;
       let res;
@@ -256,7 +257,7 @@ describe('api', () => {
       events.length.should.equal(1);
       events[0].authenticationOrigin.should.equal(serverOrigin);
     });
-    it('should include "authenticationOrigin" in recoveryEmail.change event',
+    it('should include `authenticationOrigin` in recoveryEmail.change event',
       async function() {
         let err;
         let res;
