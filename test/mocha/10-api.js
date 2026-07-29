@@ -90,7 +90,7 @@ describe('api', () => {
             account: accountId,
             requiredAuthenticationMethods: ['login-email-challenge'],
             authenticationMethod: 'login-email-challenge'
-          }
+          }, headers: {origin: serverOrigin}
         });
       } catch(e) {
         err = e;
@@ -133,35 +133,35 @@ describe('api', () => {
       events.length.should.equal(1);
       events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should not include "authenticationOrigin" in the notify event ' +
-      'when no "Origin" header is present', async function() {
-      const type = 'nonce';
-      let err;
-      let res;
-      const accountId = accounts['beta@example.com'].account.id;
-      stubPassportStub('beta@example.com');
-      const events = [];
-      const listener = event => events.push(event);
-      bedrock.events.on('bedrock-authn-token.notify', listener);
-      try {
-        res = await httpClient.post(`${baseURL}/${type}`, {
-          agent, json: {
-            account: accountId,
-            requiredAuthenticationMethods: ['login-email-challenge'],
-            authenticationMethod: 'login-email-challenge'
-          }
-        });
-      } catch(e) {
-        err = e;
-      } finally {
-        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
-      }
-      assertNoError(err);
-      should.exist(res);
-      res.status.should.equal(204);
-      events.length.should.equal(1);
-      should.not.exist(events[0].authenticationOrigin);
-    });
+    it('should reject with a 403 when no "Origin" header is present',
+      async function() {
+        const type = 'nonce';
+        let err;
+        let res;
+        const accountId = accounts['beta@example.com'].account.id;
+        stubPassportStub('beta@example.com');
+        const events = [];
+        const listener = event => events.push(event);
+        bedrock.events.on('bedrock-authn-token.notify', listener);
+        try {
+          res = await httpClient.post(`${baseURL}/${type}`, {
+            agent, json: {
+              account: accountId,
+              requiredAuthenticationMethods: ['login-email-challenge'],
+              authenticationMethod: 'login-email-challenge'
+            }
+          });
+        } catch(e) {
+          err = e;
+        } finally {
+          bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+        }
+        should.not.exist(res);
+        should.exist(err);
+        err.name.should.equal('HTTPError');
+        err.status.should.equal(403);
+        events.length.should.equal(0);
+      });
     it('should reject with a 403 when origin is not in ' +
       'authenticationOriginAllowList', async function() {
       const type = 'nonce';
@@ -299,7 +299,7 @@ describe('api', () => {
             account: accountId,
             requiredAuthenticationMethods: ['totp-challenge'],
             authenticationMethod: 'totp-challenge'
-          }
+          }, headers: {origin: serverOrigin}
         });
       } catch(e) {
         err = e;
@@ -349,7 +349,7 @@ describe('api', () => {
               email: 'alpha@example.com',
               requiredAuthenticationMethods: ['login-email-challenge'],
               authenticationMethod: 'login-email-challenge'
-            }
+            }, headers: {origin: serverOrigin}
           });
         } catch(e) {
           err = e;
@@ -396,7 +396,7 @@ describe('api', () => {
                 ['totp-challenge', 'nonce-challenge']
               ],
               authenticationMethod: 'login-email-challenge'
-            }
+            }, headers: {origin: serverOrigin}
           });
         } catch(e) {
           err = e;
@@ -423,7 +423,7 @@ describe('api', () => {
             hash,
             requiredAuthenticationMethods: ['login-email-challenge'],
             authenticationMethod: 'login-email-challenge'
-          }
+          }, headers: {origin: serverOrigin}
         });
       } catch(e) {
         err = e;
@@ -453,7 +453,7 @@ describe('api', () => {
           email: 'alpha@example.com',
           requiredAuthenticationMethods: ['login-email-challenge'],
           authenticationMethod: 'login-email-challenge'
-        }
+        }, headers: {origin: serverOrigin}
       });
       // get the hash parameters for the nonce token
       try {
@@ -483,7 +483,7 @@ describe('api', () => {
           email: 'alpha@example.com',
           requiredAuthenticationMethods: ['login-email-challenge'],
           authenticationMethod: 'login-email-challenge'
-        }
+        }, headers: {origin: serverOrigin}
       });
       // get the hash parameters for the nonce token
       try {
@@ -546,7 +546,7 @@ describe('api', () => {
             account: accountId,
             requiredAuthenticationMethods: ['login-email-challenge'],
             authenticationMethod: 'login-email-challenge'
-          }
+          }, headers: {origin: serverOrigin}
         });
       } catch(e) {
         err = e;
@@ -716,7 +716,7 @@ describe('api', () => {
           agent, json: {
             account: accountId,
             hash
-          }
+          }, headers: {origin: serverOrigin}
         });
       } catch(e) {
         err = e;
@@ -917,7 +917,7 @@ describe('api', () => {
             agent, json: {
               account: accountId,
               hash
-            }
+            }, headers: {origin: serverOrigin}
           });
         } catch(e) {
           err = e;
