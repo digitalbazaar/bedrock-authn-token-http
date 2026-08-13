@@ -5,8 +5,8 @@
 ### Added
 - Derive an `authenticationOrigin` (an origin at which the user is
   authenticating) from the request's `Origin` header and pass it to
-  `brAuthnToken.set()` and `brAuthnToken.setRecoveryEmail()`, causing it to be
-  included in the `bedrock-authn-token.notify` and
+  `brAuthnToken.set()` and `brAuthnToken.setRecoveryEmail()`. This also
+  enables it to be included in the `bedrock-authn-token.notify` and
   `bedrock-authn-token.recoveryEmail.change` events.
 - Add a mandatory `authenticationOriginAllowList` config option
   (`config['authn-token-http'].authenticationOriginAllowList`) that gates which
