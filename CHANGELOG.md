@@ -1,6 +1,6 @@
 # bedrock-authn-token-http ChangeLog
 
-## 9.2.0 - 2026-07-dd
+## 9.2.0 - 2026-08-13
 
 ### Added
 - Derive an `authenticationOrigin` (an origin at which the user is
