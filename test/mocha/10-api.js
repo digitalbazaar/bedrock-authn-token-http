@@ -133,35 +133,70 @@ describe('api', () => {
       events.length.should.equal(1);
       events[0].authenticationOrigin.should.equal('https://wallet.example');
     });
-    it('should reject with a 403 when no `Origin` header is present',
-      async function() {
-        const type = 'nonce';
-        let err;
-        let res;
-        const accountId = accounts['beta@example.com'].account.id;
-        stubPassportStub('beta@example.com');
-        const events = [];
-        const listener = event => events.push(event);
-        bedrock.events.on('bedrock-authn-token.notify', listener);
-        try {
-          res = await httpClient.post(`${baseURL}/${type}`, {
-            agent, json: {
-              account: accountId,
-              requiredAuthenticationMethods: ['login-email-challenge'],
-              authenticationMethod: 'login-email-challenge'
-            }
-          });
-        } catch(e) {
-          err = e;
-        } finally {
-          bedrock.events.removeListener('bedrock-authn-token.notify', listener);
-        }
-        should.not.exist(res);
-        should.exist(err);
-        err.name.should.equal('HTTPError');
-        err.status.should.equal(403);
-        events.length.should.equal(0);
-      });
+    it('should reject with a 403 when no `Origin` header is present and ' +
+      '`allowMissingOrigin` is `false`', async function() {
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      should.not.exist(res);
+      should.exist(err);
+      err.name.should.equal('HTTPError');
+      err.status.should.equal(403);
+      events.length.should.equal(0);
+    });
+    it('should derive no `authenticationOrigin` when no `Origin` header is ' +
+      'present and `allowMissingOrigin` is `true`', async function() {
+      // a browser always sends `Origin` on a `POST`, so a request with none is
+      // a non-browser client; it is accepted but derives no origin
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      const cfg = config['authn-token-http'];
+      const {allowMissingOrigin} = cfg;
+      cfg.allowMissingOrigin = true;
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        cfg.allowMissingOrigin = allowMissingOrigin;
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      assertNoError(err);
+      should.exist(res);
+      res.status.should.equal(204);
+      events.length.should.equal(1);
+      should.not.exist(events[0].authenticationOrigin);
+    });
     it('should reject with a 403 when the `Origin` header is not in ' +
       '`authenticationOriginAllowList`', async function() {
       const type = 'nonce';
