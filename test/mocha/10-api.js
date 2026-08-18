@@ -260,6 +260,43 @@ describe('api', () => {
       should.exist(err);
       events.length.should.equal(0);
     });
+    it('should reject and emit no event when the `Origin` header is `null` ' +
+      'and `allowMissingOrigin` is `true`', async function() {
+      // `allowMissingOrigin` accepts only a wholly absent header, so `null`
+      // remains supplied-but-unlisted. The status is not asserted:
+      // `@bedrock/passport` 500s on `Origin: null` (bedrock-passport#59)
+      // before `_getOrigin` runs.
+      const type = 'nonce';
+      let err;
+      let res;
+      const accountId = accounts['beta@example.com'].account.id;
+      stubPassportStub('beta@example.com');
+      const events = [];
+      const listener = event => events.push(event);
+      bedrock.events.on('bedrock-authn-token.notify', listener);
+      const cfg = config['authn-token-http'];
+      const {allowMissingOrigin} = cfg;
+      cfg.allowMissingOrigin = true;
+      try {
+        res = await httpClient.post(`${baseURL}/${type}`, {
+          agent, json: {
+            account: accountId,
+            requiredAuthenticationMethods: ['login-email-challenge'],
+            authenticationMethod: 'login-email-challenge',
+          }, headers: {
+            origin: 'null'
+          }
+        });
+      } catch(e) {
+        err = e;
+      } finally {
+        cfg.allowMissingOrigin = allowMissingOrigin;
+        bedrock.events.removeListener('bedrock-authn-token.notify', listener);
+      }
+      should.not.exist(res);
+      should.exist(err);
+      events.length.should.equal(0);
+    });
     it(
       'should derive `authenticationOrigin` in the notify event when ' +
       '`baseUri` is included in `authenticationOriginAllowList`',
