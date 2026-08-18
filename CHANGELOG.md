@@ -1,5 +1,15 @@
 # bedrock-authn-token-http ChangeLog
 
+## 9.3.0 - 2026-08-dd
+
+### Added
+- Add an `allowMissingOrigin` config option
+  (`config['authn-token-http'].allowMissingOrigin`, default `false`) that
+  accepts a request with no `Origin` header and derives no
+  `authenticationOrigin` from it, instead of rejecting it with a 403. This
+  admits a non-browser client, such as a CLI, that cannot send an `Origin`. An
+  `Origin` of `null` is an opaque browser origin and is still rejected.
+
 ## 9.2.0 - 2026-08-13
 
 ### Added
