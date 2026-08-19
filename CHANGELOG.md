@@ -6,7 +6,7 @@
 - Allow a request with no `Origin` header instead of rejecting it with a 403.
   The allow list gates the origins a client may pick; a client that picks none
   gets none, and no `authenticationOrigin` is derived. An `Origin` of `null` is
-  an opaque browser origin and is still rejected.
+  an opaque browser origin and is still rejected unless it is in the allow list.
 
 ## 9.2.0 - 2026-08-13
 
