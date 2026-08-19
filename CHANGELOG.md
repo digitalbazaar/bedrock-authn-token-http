@@ -1,6 +1,6 @@
 # bedrock-authn-token-http ChangeLog
 
-## 9.2.1 - 2026-08-dd
+## 9.2.1 - 2026-08-19
 
 ### Fixed
 - Allow a request with no `Origin` header instead of rejecting it with a 403.
